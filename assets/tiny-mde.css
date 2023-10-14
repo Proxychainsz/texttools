@@ -1,0 +1,151 @@
+/* .TMBlankLine {
+	height: 24px;
+} */
+
+.TMH1,
+.TMSetextH1 {
+	line-height: 120%;
+	font-weight: 700;
+	margin-bottom: 8px;
+}
+
+.TMSetextH1 {
+	margin-bottom: 0px;
+}
+
+.TMSetextH1Marker {
+	margin-bottom: 8px;
+}
+
+.TMH2,
+.TMSetextH2 {
+	line-height: 110%;
+	font-weight: 700;
+	margin-bottom: 4px;
+}
+
+.TMMark_TMCode {
+	color: rgb(255, 185, 136);
+}
+
+.TMFencedCodeBacktick,
+.TMFencedCodeTilde,
+.TMIndentedCode,
+.TMCode {
+	padding-left: 4px;
+	background-color: #0000003c;
+}
+
+.TMCodeFenceBacktickOpen,
+.TMCodeFenceTildeOpen {
+	border-bottom: 1px solid var(--accent-0);
+}
+
+.TMCodeFenceBacktickClose,
+.TMCodeFenceTildeClose {
+	border-top: 1px solid var(--accent-0);
+}
+
+.TMInfoString {
+	font-weight: 300;
+	color: #ffffff67;
+	font-style: italic;
+}
+
+.TMCode {
+	border: 1px solid #c0c0c0;
+	border-radius: 2pxrgb (255, 0, 0);
+}
+
+.TMBlockquote {
+	font-style: italic;
+	/* border-left: 2px solid #c0c0c0; */
+	padding-left: 0px;
+	margin-left: 4px;
+}
+
+.TMMark {
+	color: #a0a0a0;
+}
+
+.TMMark_TMH1,
+.TMMark_TMH2 {
+	color: #ff8080;
+	font-weight: 700;
+}
+
+.TMMark_TMUL,
+.TMMark_TMOL {
+	color: #ff9748;
+	font-weight: 700;
+}
+
+.TMImage {
+	/* text-decoration: underline; */
+	text-decoration-color: #00ff00;
+}
+
+.TMLink {
+	/* text-decoration: underline; */
+	text-decoration-color: #0088ff;
+}
+
+/* .TMLinkLabel {
+	text-decoration: underline;
+} */
+
+.TMLinkLabel_Definition,
+.TMLinkLabel_Valid {
+	color: #40c040;
+}
+
+.TMLinkLabel_Invalid {
+	color: #0088ff;
+	font-weight: 700;
+}
+
+.TMLinkTitle {
+	font-style: italic;
+}
+
+.TMLinkDestination,
+.TMAutolink {
+	color: #6f6fff;
+}
+
+.TMHR {
+	position: relative;
+}
+
+.TMHR:before {
+	content: '';
+	position: absolute;
+	bottom: 50%;
+	left: 40%;
+	border-bottom: 2px solid #808080;
+	width: 20%;
+	z-index: 0;
+}
+
+.TMHTML,
+.TMHTMLBlock {
+	color: #f961c9;
+}
+
+.TMHTMLBlock {
+	color: #ff3f7c;
+}
+
+.TMNumbers {
+	color: var(--accent-b2);
+	text-shadow: 0 0 2px rgb(0, 0, 0);
+}
+
+.TMStrikethrough {
+	color: #ffffffa0;
+	text-decoration: line-through;
+}
+
+.TMStrong {
+	font-weight: 700;
+}

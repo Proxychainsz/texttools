@@ -18,7 +18,7 @@
 		<script>
 			document.addEventListener('DOMContentLoaded', event => {
 				// load saved text
-				const savedText = localStorage.getItem('text') || '';
+				const savedText = localStorage.getItem('text') || '||> Hello world.';
 				textField.value = savedText;
 				updateInput();
 
@@ -28,7 +28,7 @@
 				const usrbg = localStorage.getItem('usrbg') || 'assets/bg3.webp';
 				const h = localStorage.getItem('h') || '220';
 				const s = localStorage.getItem('s') || '10%';
-				// const c = localStorage.getItem('c') || '14';
+				const c = localStorage.getItem('c') || '14';
 
 				if (rand == 'true') {
 					window.onload = function () {
@@ -38,7 +38,7 @@
 				} else {
 					document.documentElement.style.setProperty('--h', h);
 					document.documentElement.style.setProperty('--s', s);
-					// document.documentElement.style.setProperty('--c', c);
+					document.documentElement.style.setProperty('--c', c);
 					bgEl.crossOrigin = `Anonymous`;
 					bgEl.src = usrbg;
 				}
@@ -232,7 +232,6 @@
 						</button>
 					</div>
 				</div>
-
 				<spacerLine></spacerLine>
 				<div id="cCalculator">
 					<select id="calcOP" name="Operation" title="Operation">
@@ -254,7 +253,7 @@
 							<path
 								stroke-linecap="round"
 								stroke-width="20"
-								d="M51.152 26v58.303M22 55.151h58.303m31.394 0H170m-58.303 102.031H170m-58.303-24.667H170m-139.462-8.28 41.227 41.227m-41.227 0 41.227-41.227" />
+								d="M51.152 26v58.303M22 55.151h58.303m31.394 0H170m-58.303 102.031H170m-58.303-24.667H170m-139.462-8.28 41.227 41.227m-41.227 0 41.227-41.227"></path>
 						</svg>
 					</button>
 				</div>
@@ -271,13 +270,13 @@
 								title="Open in its own window"
 								class="textButtons"
 								onclick="window.open(window.location.href, 'popup', 'toolbar=no,location=no,status=no,menubar=no,resizable=yes,width=640px,height=840vh'); return false;"
-								href="">
+								href>
 								Popup
 							</span>
 							<div id="cSearchReplace">
 								<input id="inputSearch" type="search" placeholder="Search for" autocomplete="off" />
 								<input id="inputReplace" type="search" placeholder="Replace with" autocomplete="off" />
-								<button id="btnSearchReplace" type="button" class="button-circle" title="Use 'Ctrl+Click' to flip values">
+								<button id="btnSearchReplace" type="button" class="button-circle" title="Use Ctrl+Click to flip values">
 									<svg viewBox="0 0 1024 1024" class="icons">
 										<path
 											d="M554.667 469.333h-85.333v-85.333c0-11.776-9.557-21.333-21.333-21.333s-21.333 9.557-21.333 21.333v85.333h-85.333c-11.776 0-21.333 9.557-21.333 21.333s9.557 21.333 21.333 21.333h85.333v85.333c0 11.776 9.557 21.333 21.333 21.333s21.333-9.557 21.333-21.333v-85.333h85.333c11.776 0 21.333-9.557 21.333-21.333s-9.557-21.333-21.333-21.333z"></path>
@@ -311,6 +310,7 @@
 											<path d="M918 384v128h-128v298h-128v-298h-128v-128h384zM106 170h556v128h-214v512h-128v-512h-214v-128z"></path>
 										</svg>
 									</button>
+									<!-- xxxxxxxxxxxxxxxx -->
 									<div id="altFloats">
 										<button onclick="altToggle()" id="btnAltToggle" type="button" class="button-circle">
 											<svg viewBox="0 -960 960 960" class="icons">
@@ -326,6 +326,7 @@
 											</svg>
 										</button>
 									</div>
+									<!-- xxxxxxxxxxxxxxxx -->
 									<button id="btnToLowercase" type="button" class="button-circle">
 										<svg viewBox="0 0 1024 1024" class="icons">
 											<title>To lowercase</title>
@@ -351,9 +352,10 @@
 							<textarea id="altField" placeholder="||> Output area" style="padding-bottom: 40px"></textarea>
 						</div>
 					</div>
+					<!-- cMiddle -->
 				</div>
 				<div id="separator">
-					<toggleSize onclick="toggleSize()" title="Click to toggle size or drag to resize manualy"></toggleSize>
+					<togglesize onclick="toggleSize()" title="Click to toggle size or drag to resize manualy"></togglesize>
 				</div>
 				<div id="page_right">
 					<div class="enc_padding">
@@ -376,7 +378,7 @@
 								<div class="enc-extras">
 									<div class="enc-extras-h1">
 										<span>Extra outputs</span>
-										<input class="inp-cbx" id="encodings" type="checkbox" style="display: none" checked="true" />
+										<input class="inp-cbx" id="encodings" type="checkbox" style="display: none" checked="checked" />
 										<label class="cbx" for="encodings"
 											><span>
 												<svg width="11px" height="10px" viewbox="0 0 11 10">
@@ -415,10 +417,10 @@
 					</div>
 					<div class="dont">
 						<div id="resContainer">
-							<resID>Tip</resID>
-							<resDiv>
+							<resid>Tip</resid>
+							<resdiv>
 								<textarea id="resArea" class="resTxtArea" placeholder="You can double click results to copy them up :)" readonly></textarea>
-							</resDiv>
+							</resdiv>
 						</div>
 					</div>
 				</div>
@@ -429,7 +431,7 @@
 					<h2>Custom background</h2>
 					<div class="dialog_column text02">
 						<div class="dialog_row">
-							<span>Select from url: </span>
+							<span>Select from url: </span>
 							<input id="inputBgURL" type="text" placeholder="...or leave empty and confirm to use the photo of the day" class="dialog_input" />
 							<button id="dialogURL" type="button" class="dialog_btn">✅</button>
 						</div>
@@ -444,7 +446,8 @@
 						<span>🔴 <a href="https://github.com/merricx/Enigmator"> Enigmator</a></span>
 						<span>🟢 <a href="https://www.boxentriq.com/"> Boxentriq</a></span>
 						<span>🔵 <a href="https://github.com/gchq/CyberChef"> CyberChef</a></span>
-						<span>🟡 <a href="https://github.com/MaitreyeePaliwal/Cryptography-Ciphers"> Cryptography-Ciphers</a></span>
+						<span>🟡 <a href="https://github.com/MaitreyeePaliwal/Cryptography-Ciphers"> Cryptography Ciphers</a></span>
+						<span>🟠 <a href="https://github.com/jefago/tiny-markdown-editor"> Tiny Markdown Editor</a></span>
 					</div>
 					<span style="color: var(--accent-a1)">You can find the <a href="https://old.proxychains.pages.dev/">old UI here</a>.</span>
 					<span class="info"
@@ -464,5 +467,8 @@
 		<script async src="js/cryptography.js"></script>
 		<script async src="js/boxentriq.js"></script>
 		<script async src="js/cyberchef.js"></script>
+
+		<script src="/js/lib/tiny-mde.tiny.js"></script>
+		<link rel="stylesheet" href="assets/tiny-mde.css" />
 	</body>
 </html>

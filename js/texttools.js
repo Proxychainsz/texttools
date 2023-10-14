@@ -1,3 +1,5 @@
+const tinyEditor = new TinyMDE.Editor({ textarea: 'textField', content: '||> Hello world!' });
+const TinyMde = document.getElementsByClassName('TinyMDE');
 const cipherField = document.getElementById('cipherField');
 const keyField = document.getElementById('keyField');
 const textField = document.getElementById('textField');
@@ -10,8 +12,7 @@ const digitCounter = document.getElementById('digitCount');
 const selectCounter = document.getElementById('selectCount');
 const groupCounter = document.getElementById('groupCount');
 
-textField.oninput = () => {
-	// textField.value = lenTrim(textField.value, 666666);
+tinyEditor.addEventListener('change', e => {
 	charCounter.innerHTML = (textField.value.match(/(.|\n|\r)/g) || []).length;
 	noWSpaceCounter.innerHTML = (textField.value.match(/\S/g) || []).length;
 	letterCounter.innerHTML = (textField.value.match(/[a-z]/gi) || []).length;
@@ -20,9 +21,13 @@ textField.oninput = () => {
 	else groupCounter.innerHTML = (textField.value.trim().split(/\s+/) || []).length;
 
 	localStorage.setItem('text', textField.value);
-};
+});
 
-textField.addEventListener('keydown', function (e) {
+// TinyMde[0].addEventListener('input', () => {
+// 	updateHistory();
+// });
+
+TinyMde[0].addEventListener('keydown', function (e) {
 	if (e.key == 'Tab') {
 		e.preventDefault();
 		document.execCommand('insertText', false, '\t');
@@ -64,11 +69,7 @@ function toggleSize() {
 }
 
 function selectCount() {
-	const el = document.activeElement;
-	if (el.value != undefined) {
-		const selectedText = el.value.substring(el.selectionStart, el.selectionEnd);
-		selectCounter.innerHTML = selectedText.length;
-	}
+	selectCounter.innerHTML = window.getSelection().toString().length;
 }
 
 function selectReset(e) {
@@ -82,15 +83,6 @@ function selectReset(e) {
 	selectCounter.innerHTML = '0';
 }
 
-document.onkeydown = KeyPressDown;
-function KeyPressDown(e) {
-	if (e.ctrlKey) {
-		if (e.keyCode == 89) redoButton(); // Y
-		if (e.keyCode == 90) undoButton(); // Z
-		if (e.keyCode == 65 || e.keyCode == 97) selectCount(); // a  A
-	}
-}
-
 const undoHistory = [];
 const redoHistory = [];
 function updateHistory() {
@@ -98,15 +90,15 @@ function updateHistory() {
 }
 
 function updateInput() {
-	textField.dispatchEvent(new Event('input'));
+	tinyEditor.setContent(textField.value);
 }
 
 function undoButton() {
 	if (undoHistory.slice(-1)[0]) {
 		redoHistory.push(textField.value);
 		textField.value = undoHistory.slice(-1)[0];
-		updateInput();
 		undoHistory.pop();
+		updateInput();
 	}
 }
 
@@ -114,8 +106,17 @@ function redoButton() {
 	if (redoHistory.slice(-1)[0]) {
 		updateHistory();
 		textField.value = redoHistory.slice(-1)[0];
-		updateInput();
 		redoHistory.pop();
+		updateInput();
+	}
+}
+
+document.onkeydown = KeyPressDown;
+function KeyPressDown(e) {
+	if (e.ctrlKey) {
+		if (e.keyCode == 89) redoButton(); // Y
+		if (e.keyCode == 90) undoButton(); // Z
+		if (e.keyCode == 65 || e.keyCode == 97) selectCount(); // a  A
 	}
 }
 
@@ -242,6 +243,7 @@ btnAltCopy.onclick = () => {
 	if (altField.value == '') return;
 	updateHistory();
 	textField.value = altField.value;
+	updateInput();
 };
 
 remWSpaces.onclick = () => {
@@ -812,12 +814,12 @@ function bgSet(img) {
 		hsl = bgGetColor(bgElement);
 		document.documentElement.style.setProperty('--h', hsl[0]);
 		document.documentElement.style.setProperty('--s', hsl[1]);
-		// document.documentElement.style.setProperty('--c', hsl[2]);
+		document.documentElement.style.setProperty('--c', hsl[2]);
 
 		localStorage.setItem('usrbg', img);
 		localStorage.setItem('h', hsl[0]);
 		localStorage.setItem('s', hsl[1]);
-		// localStorage.setItem('c', hsl[2]);
+		localStorage.setItem('c', hsl[2]);
 	};
 }
 
