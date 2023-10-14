@@ -242,6 +242,7 @@ btnAltCopy.onclick = () => {
 	if (altField.value == '') return;
 	updateHistory();
 	textField.value = altField.value;
+	updateInput();
 };
 
 remWSpaces.onclick = () => {
