@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>TextTools++</title>
+	<meta property="og:title" content="TextTools++" />
+	<meta property="og:description" content="Useful tools to manipulate strings and speed up puzzle solving">
+	<meta property="og:url" content="https://proxychains.pages.dev/" />
+	<meta property="og:image" content="https://proxychains.pages.dev/caticon.png" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="theme-color" content="#1e1e2e" />
+    <link id="favicon" rel="icon" type="image/png" href="caticon.png" />
+	<tag autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+
+	<link rel="stylesheet" href="./style.css"/>
+	<link rel="stylesheet" href="./blobs.css"/>
+	<link rel="preload stylesheet" href="./right.css" as="style" type="text/css" crossorigin="anonymous" />
+
+	<style>
+		:root {
+			--v: 0.3.67;
+
+			--main: 227, 18, 72;
+			--alt0: 255, 5, 180;
+			--alt1: 127, 51, 214;
+			--alt2: 25, 42, 145;
+			--alt3: 6, 171, 247;
+			--alt4: 26, 231, 196;
+			--alt5: 49, 211, 84;
+			--alt6: 255, 162, 53;
+			--alt7: 193, 162, 255;
+			--alt8: 34, 43, 58;
+
+			--bg: rgb(24, 24, 37);
+			--transparent1: color-mix(in LAB, rgb(var(--accent)) 7%, transparent);
+			--mainblur: blur(100px);
+
+			--accent: var(--main);
+			--text: rgba(255, 255, 255, 0.66);
+			--bgaccent: color-mix(in LAB, var(--bg), rgb(var(--accent)) 16%);
+			--bggradient: linear-gradient(130deg, var(--bg), var(--bgaccent), var(--bg), var(--bgaccent), var(--bg));
+			--rainbow: linear-gradient(45deg, rgb(var(--main)), rgb(var(--main)), rgb(var(--alt0)), rgb(var(--alt1)), rgb(var(--alt2)), rgb(var(--alt3)), rgb(var(--alt4)), rgb(var(--alt5)), rgb(var(--alt6)), rgb(var(--alt7)), rgb(var(--alt8)), rgb(var(--alt8)));
+			--darkaccent: color-mix(IN LAB, rgb(var(--accent)), #000 15%);
+        }
+	</style>
+</head>
+
+<body>
+	<div class="blob-c">
+		<div class="blob"></div>
+		<div class="blob one"></div>
+		<div class="blob two"></div>
+		<div class="blob three"></div>
+		<div class="blob four"></div>
+		<div class="blob five"></div>
+		<div class="blob six"></div>
+	</div>
+	<div class="wrap">
+		<div id="page_left">
+			<main class="main-container">
+				<div class="main-left">
+					<div class="main-left-top">
+						<svg id="ico_heart" viewBox="0 0 1024 1024" class="icon_heart icons">
+							<title>♥</title>
+							<path d="M512 950.857c-9.143 0-18.286-3.429-25.143-10.286l-356.571-344c-4.571-4-130.286-118.857-130.286-256 0-167.429 102.286-267.429 273.143-267.429 100 0 193.714 78.857 238.857 123.429 45.143-44.571 138.857-123.429 238.857-123.429 170.857 0 273.143 100 273.143 267.429 0 137.143-125.714 252-130.857 257.143l-356 342.857c-6.857 6.857-16 10.286-25.143 10.286z"></path>
+						</svg>
+						<div class="spacer-line"></div>
+						<svg id="rotateCWButton" viewBox="0 0 1024 1024" class="icons">
+							<title>Rotate text ↻ 90°</title>
+							<path d="M720 660q34-46 44-106h86q-12 92-68 166zM554 764q60-10 106-44l62 62q-72 56-168 68v-86zM850 470h-86q-10-60-44-106l62-60q58 72 68 166zM664 236l-194 190v-166q-92 16-153 87t-61 165 61 165 153 87v86q-126-16-213-112t-87-226 87-226 213-112v-132z"></path>
+						</svg>
+						<svg id="rotateCCWButton" viewBox="0 0 1024 1024" class="icons">
+							<title>Rotate text ↺ 90°</title>
+							<path d="M554 174q126 16 213 112t87 226-87 226-213 112v-86q92-16 153-87t61-165-61-165-153-87v166l-194-190 194-194v132zM302 782l62-62q46 34 106 44v86q-96-12-168-68zM260 554q10 58 42 106l-60 60q-56-74-68-166h86zM304 364q-36 52-44 106h-86q12-90 70-166z"></path>
+						</svg>
+						<svg id="reverseLinesButton" viewBox="0 -960 960 960" class="icons">
+							<title>Reverse lines</title>
+							<path d="M307-58.5 138-228l168-167 65 64.5-58 57h334l-57-57 65-64.5 167 167L654-58.5 589-123l58-58H314l56 58-63 64.5ZM184.5-504v-397.5H276V-504h-91.5Zm250 0v-397.5H526V-504h-91.5Zm250 0v-397.5H776V-504h-91.5Z"></path>
+						</svg>
+						<svg id="reverseRowsButton" viewBox="58.5 138 843 684" class="icons">
+							<title>Reverse rows</title>
+							<path d="m58.5 307 169.5-169 167 168-64.5 65-57-58v334l57-57 64.5 65-167 167-169.5-168 64.5-65 58 58v-333l-58 56-64.5-63zm445.5-122.5h397.5v91.5h-397.5v-91.5zm0 250h397.5v91.5h-397.5v-91.5zm0 250h397.5v91.5h-397.5v-91.5z"></path>
+						</svg>
+						<svg id="toLowercaseButton" viewBox="0 -960 960 960" class="icons">
+							<title>To lowercase</title>
+							<path d="M269-139v-563H59v-119h539v119H388v563H269Zm383 0v-340H522v-119h379v119H771v340H652Z"></path>
+						</svg>
+						<svg id="toUppercaseButton" viewBox="0 -960 960 960" class="flipX icons">
+							<title>To uppercase</title>
+							<path d="M269-139v-563H59v-119h539v119H388v563H269Zm383 0v-340H522v-119h379v119H771v340H652Z"></path>
+						</svg>
+					</div>
+					<div class="main-left-bottom">
+						<svg id="sortInput" viewBox="0 -960 960 960" class="icons">
+							<title>Sort items</title>
+							<path d="m72-276 166-408h72l165 408h-78l-38-98H183l-39 98H72Zm134-160h131l-64-162h-4l-63 162Zm339 160v-67l224-280H563v-61h281v68L624-337h222v61H545ZM372-778l108-108 108 108H372ZM480-74 372-182h216L480-74Z"></path>
+						</svg>
+						<svg id="searchReplace" viewBox="0 -960 960 960" class="icons">
+							<title>Search & Replace</title>
+							<path d="M60-180v-90.5h406.5v90.5H60Zm0-216.5V-487h240v90.5H60Zm0-216V-703h240v90.5H60ZM845-199 689.833-358q-25.682 20-54.403 29.25-28.722 9.25-60.957 9.25-87.115 0-147.294-61.124Q367-441.747 367-529.807q0-87.853 60.392-149.523T574.293-741Q661-741 721.5-679.289q60.5 61.71 60.5 149.211 0 32.735-8.75 62.656-8.75 29.922-27.75 54.057L901-254.5 845-199ZM573.706-399q54.01 0 91.902-37.882 37.892-37.883 37.892-92.839 0-54.955-37.505-93.367Q628.49-661.5 574.912-661.5q-54.412 0-91.412 38.062-37 38.063-37 92.438 0 56 36.702 94t90.504 38Z"></path>
+						</svg>
+						<svg id="doMath" viewBox="0 -960 960 960" class="icons">
+							<title>Basic calculator</title>
+							<path d="M320-234h48v-88h88v-48h-88v-88h-48v88h-88v48h88v88Zm206-35h199v-48H526v48Zm0-107h199v-48H526v48Zm36-154 60.5-61 61.5 61 34-35-61-61 61-61-34-34-61 61-61-61-35 34 61 61-61 61 35 35Zm-315-76h194v-48H247v48ZM189-98q-37.175 0-64.088-26.912Q98-151.825 98-189v-582q0-37.588 26.912-64.794Q151.825-863 189-863h582q37.588 0 64.794 27.206Q863-808.588 863-771v582q0 37.175-27.206 64.088Q808.588-98 771-98H189Z"></path>
+						</svg>
+						<svg id="undoButton" viewBox="0 -960 960 960" class="icons" onclick="undoButton()">
+							<title>Undo action</title>
+							<path d="M269-179v-91h314q62 0 104.5-43.5T730-419q0-60-42.5-104.5T583-568H313l99 100-64 64-209-209 209-209 64 63-99 100h269q100 0 170 70t70 170q0 100-70 170t-170 70H269Z"></path>
+						</svg>
+						<svg id="redoButton" viewBox="0 -960 960 960" class="flipX icons" onclick="redoButton()">
+							<title>Redo action</title>
+							<path d="M269-179v-91h314q62 0 104.5-43.5T730-419q0-60-42.5-104.5T583-568H313l99 100-64 64-209-209 209-209 64 63-99 100h269q100 0 170 70t70 170q0 100-70 170t-170 70H269Z"></path>
+						</svg>
+						<svg id="copyInputBox" viewBox="0 -960 960 960" class="icons">
+							<title>Copy text area</title>
+							<path d="M176-45q-38.587 0-65.294-27.406Q84-99.812 84-136v-589h92v589h459v91H176Zm148-148q-38.175 0-64.587-27.612Q233-248.225 233-284v-542q0-36.188 26.413-63.594Q285.825-917 324-917h421q37.588 0 64.794 27.406Q837-862.188 837-826v542q0 35.775-27.206 63.388Q782.588-193 745-193H324Z"></path>
+						</svg>
+						<svg id="popupWindow" viewBox="0 -960 960 960" class="icons" onclick="window.open(window.location.href, 'popup', 'toolbar=no,location=no,status=no,menubar=no,resizable=yes,width=570px,height=800vh'); return false;" href=''>
+							<title>Popup in new window</title>
+							<path d="M190-99q-37.175 0-64.088-26.912Q99-152.825 99-190v-580q0-37.588 26.912-64.794Q152.825-862 190-862h267v92H190v580h580v-267h92v267q0 37.175-27.206 64.088Q807.588-99 770-99H190Zm216-243-63-64 364-364H517v-92h345v345h-92v-189L406-342Z"></path>
+						</svg>
+						<div class="spacer-line"></div>
+						<svg id="toggleColors" onclick="toggleColors()" viewBox="0 -960 960 960" class="icons">
+							<title>Change theme color</title>
+							<path d="M481-59q-86.719 0-162.86-33Q242-125 183.5-183q-58.5-58-91-134.653Q60-394.305 60-480.669 60-569 93.392-645.839q33.392-76.838 91.929-133.736 58.536-56.899 136.717-89.662Q400.218-902 487.93-902q82.916 0 157.796 28.01 74.881 28.01 131.577 78Q834-746 868-676.8q34 69.2 34 147.8 0 112-62 184.5T665-272h-61q-18 0-29.5 13.179-11.5 13.178-11.5 29.392Q563-211 573.5-201.5t10.5 31.133Q584-136 551.2-97.5 518.4-59 481-59ZM257-455q20 0 34.5-14.523 14.5-14.524 14.5-34.5Q306-524 291.267-538.5 276.533-553 257.5-553q-20.5 0-34.5 14.523-14 14.524-14 34.5Q209-484 223-469.5q14 14.5 34 14.5Zm121-163q21 0 35.5-14t14.5-34.5q0-21.5-14.5-35T379-715q-21 0-34.5 13.733Q331-687.533 331-667.5q0 21.5 13.733 35.5 13.734 14 33.267 14Zm204.5 0q20.5 0 35-14t14.5-34.5q0-21.5-14.733-35Q602.533-715 583.5-715q-21.5 0-35 13.733Q535-687.533 535-667.5q0 21.5 13.5 35.5t34 14Zm124 163q20.5 0 35-14.523 14.5-14.524 14.5-34.5Q756-524 741.5-538.5 727-553 707-553q-21 0-34.5 14.523-13.5 14.524-13.5 34.5Q659-484 672.733-469.5 686.467-455 706.5-455Z"></path>
+						</svg>
+					</div>
+				</div>
+				<div class="main-middle">
+					<textarea id="input" autofocus="" placeholder="Hello world!" maxlength="999999"></textarea>
+					<div class="main-mid-bottom">
+						<div class="main-mid-bottom-container">
+							<span id="charCount" class="bottomText">0</span>
+							<span id="noWSpaceCount" class="bottomText">0</span>
+							<span id="letterCount" class="bottomText">0</span>
+							<span id="digitCount" class="bottomText">0</span>
+							<span id="groupCount" class="bottomText">0</span>
+							<span id="selectCount" class="bottomText">0</span>
+						</div>
+					</div>
+				</div>
+				<div class="main-right">
+					<div class="main-right-container">
+						<span class="spacer-title">Remove characters</span>
+						<div class="btn-container">
+							<button id="remNumbers" type="button" class="btn-halfleft">Numbers</button>
+							<button id="remLetters" type="button" class="btn-halfright">Letters</button>
+						</div>
+						<div class="btn-container">
+							<button id="remWSpaces" type="button" class="btn-halfleft">Spaces</button>
+							<button id="remSpecial" type="button" class="btn-halfright">Special</button>
+						</div>
+						<div class="spacer-line"></div>
+						<span class="spacer-title">Text Manipulation</span>
+						<div class="btn-container">
+							<button id="trimButton" type="button" class="btn-halfleft">trim</button>
+							<button id="splitInto" type="button" class="btn-halfright">split</button>
+						</div>
+						<div class="btn-container">
+							<button id="joinLinesButton" type="button" style="height: 36px;" class="btn-halfleft">join lines</button>
+							<button id="spacesToLines" type="button" style="height: 36px;" class="btn-halfright">spaces to lines</button>
+						</div>
+						<div class="btn-container">
+							<button id="toSpreadsheetButton" type="button" style="height: 36px;" class="btn-halfleft">to spreadsheet</button>
+							<button id="turnIntoSquareButton" type="button" style="height: 36px;" class="btn-halfright">turn into square</button>
+						</div>
+						<div class="spacer-line"></div>
+						<span class="spacer-title">encodings</span>
+						<div class="btn-container">
+							<button id="toBinary" type="button" class="btn-halfleft">str 2 bin</button>
+							<button id="fromBinary" type="button" class="btn-halfright">bin 2 str</button>
+						</div>
+						<div class="btn-container">
+							<button id="decToBinary" type="button" class="btn-halfleft">dec 2 bin</button>
+							<button id="binToDecimal" type="button" class="btn-halfright">bin 2 dec</button>
+						</div>
+						<div class="spacer-line"></div>
+						<span class="spacer-title">extras</span>
+						<div class="btn-container">
+							<button id="binaryFlip" type="button" class="btn-halfleft">bin flip</button>
+							<button id="numLines" type="button" class="btn-halfright">add line numbers</button>
+						</div>
+						<div class="btn-container">
+							<button id="atbash" type="button" class="btn-halfleft">atbash</button>
+							<button id="fibonacci" type="button" class="btn-halfright">fibonacci</button>
+						</div>
+						<div class="spacer-line"></div>
+						<span class="spacer-title ">a1z26</span>
+						<div class="btn-container">
+							<button id="a1z26Encrypt" onclick="a1z26Enc_btn()" type="button" class="btn-halfleft">encode</button>
+							<button id="a1z26Decrypt" onclick="a1z26Dec_btn()" type="button" class="btn-halfright">decode</button>
+						</div>
+						<div class="spacer-line"></div>
+						<svg id="toggleSize" onclick="toggleSize()" viewBox="0 -960 960 960" class="icons">
+							<title>uwu wat is dis?</title>
+							<path d="M200-200v-240h60v180h180v60H200Zm500-320v-180H520v-60h240v240h-60Z"></path>
+						</svg>
+					</div>
+				</div>
+			</main>
+		</div>
+		<div id="page_right">
+			<div class="enc_container">
+				<div class="enc-left">
+					<div class="enc-left-container">
+						<svg onclick="copyMessageFrom()" viewBox="0 0 841.1428571428571 1024" class="icons icon_smaller">
+							<path d="M841.143 548.571c0 19.429-7.429 38.286-21.143 52l-372 372c-13.714 13.143-32.571 21.143-52 21.143s-37.714-8-51.429-21.143l-42.857-42.857c-13.714-13.714-21.714-32.571-21.714-52s8-38.286 21.714-52l167.429-167.429h-402.286c-41.143 0-66.857-34.286-66.857-73.143v-73.143c0-38.857 25.714-73.143 66.857-73.143h402.286l-167.429-168c-13.714-13.143-21.714-32-21.714-51.429s8-38.286 21.714-51.429l42.857-42.857c13.714-13.714 32-21.714 51.429-21.714s38.286 8 52 21.714l372 372c13.714 13.143 21.143 32 21.143 51.429z"></path>
+						</svg>
+						<svg onclick="copyMessageTo()" viewBox="0 0 914.2857142857142 1024" class="icons icon_smaller">
+							<path d="M877.714 512v73.143c0 38.857-25.714 73.143-66.857 73.143h-402.286l167.429 168c13.714 13.143 21.714 32 21.714 51.429s-8 38.286-21.714 51.429l-42.857 43.429c-13.143 13.143-32 21.143-51.429 21.143s-38.286-8-52-21.143l-372-372.571c-13.143-13.143-21.143-32-21.143-51.429s8-38.286 21.143-52l372-371.429c13.714-13.714 32.571-21.714 52-21.714s37.714 8 51.429 21.714l42.857 42.286c13.714 13.714 21.714 32.571 21.714 52s-8 38.286-21.714 52l-167.429 167.429h402.286c41.143 0 66.857 34.286 66.857 73.143z"></path>
+						</svg>
+					</div>
+				</div>
+				<div class="enc-middle">
+					<textarea id="cipherField" autofocus="" placeholder="What are we decoding today?" class="right-textarea"></textarea>
+					<textarea id="keyField" autofocus="" placeholder="Password goes here" class="right-textarea1"></textarea>
+				</div>
+				<div class="enc-right">
+					<div class="enc-extras">
+						<span class="spacer-title">extra outputs</span>
+						<div class="enc-extras-h1">
+							<input class="inp-cbx" id="encodings" type="checkbox" style="display: none;" checked="true"/>
+							<label class="cbx" for="encodings"><span>
+								<svg width="11px" height="10px" viewbox="0 0 11 10">
+								<polyline points="1 5 4 8 11 1"></polyline>
+								</svg></span><span><h5>Encodings</h5></span>
+							</label>
+							<input class="inp-cbx" id="rotX" type="checkbox" style="display: none;"/>
+							<label class="cbx" for="rotX" title="Output text into multiple ROTs"><span>
+								<svg width="11px" height="10px" viewbox="0 0 11 10">
+								<polyline points="1 5 4 8 11 1"></polyline>
+								</svg></span><span><h5>RotX</h5></span>
+							</label>
+							<input class="inp-cbx" id="baseX" type="checkbox" style="display: none;"/>
+							<label class="cbx" for="baseX" title="Convert to/from multiple bases"><span>
+								<svg width="11px" height="10px" viewbox="0 0 11 10">
+								<polyline points="1 5 4 8 11 1"></polyline>
+								</svg></span><span><h5>BaseX</h5></span>
+							</label>
+							<input class="inp-cbx" id="charcodeX" type="checkbox" style="display: none;"/>
+							<label class="cbx" for="charcodeX" title="Convert to/from multiple charcodes"><span>
+								<svg width="11px" height="10px" viewbox="0 0 11 10">
+								<polyline points="1 5 4 8 11 1"></polyline>
+								</svg></span><span><h5>CharcodeX</h5></span>
+							</label>
+						</div>
+						<div class="enc-extras-h2">
+							<button onclick="btnMassEnc()" type="button" class="btn-halfleft" data-scramble="Encode">encode</button>
+							<button onclick="btnMassDec()" type="button" class="btn-halfright" data-scramble="Decode">decode</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="dont">
+				<div id="resContainer">
+					<resDiv>
+						<textarea id="resArea" class="resTxtArea" placeholder="Tip: You can double click results to copy them up :)" readonly></textarea>
+					</resDiv>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="js/texttools.js"></script>
+	<script type="text/javascript" src="js/enigmator_c.js"></script>
+	<script type="text/javascript" src="js/cryptography.js"></script>
+	<script type="text/javascript" src="js/boxentriq.js"></script>
+	<script type="text/javascript" src="js/cyberchef.js"></script>
+    <script type="text/javascript" src="js/lib/base32/Base32.js"></script>
+    <script type="text/javascript" src="js/lib/cryptojs/components/core-min.js"></script>
+    <script type="text/javascript" src="js/lib/cryptojs/components/enc-base64-min.js"></script>
+    <script type="text/javascript" src="js/lib/uuencode/uuencode.js"></script>
+	<script type="text/javascript" src="js/lib/xor/XORCipher.js"></script>
+
+	<script>
+		function btnMassEnc() {
+			var result = {};
+			var element = "";
+			var txt = cipherField.value.trim();
+			var key = keyField.value.trim();
+
+			if (isEmpty(txt)) return;
+			document.getElementById("resContainer").innerHTML = "";
+
+			if (isNumSpaces(key) == false && key != '') {
+				result["Vigenere"] = Enigmator.vigenere.enc(txt, key);
+				result["Autokey"] = Enigmator.autokey.enc(txt, key);
+				result["Beaufort"] = Enigmator.beaufort.enc(txt, key);
+				result["Playfair"] = Enigmator.playfair.enc(txt, key);
+				result["Simple_Substitution"] = Enigmator.substitution.enc(txt, key);
+				result["ADFGVX"] = Enigmator.adfgvx.enc(txt, key);
+				result["xor"] = Enigmator.xor.enc(txt, key);
+				result["Columnar_Transposition"] = Boxentriq.ColumnarTransposition.enc(txt, key);
+			}
+
+			if (isNumSpaces(key)) {
+				result["Hill"] = helperEncHill(txt, key);
+				let k = key.split(' ');
+				result["Affine"] = Enigmator.affine.enc(txt, k[0], k[1]);
+			}
+
+			if (isItNumber(key)) {
+				result["Caesar"] = Enigmator.caesar(txt, key);
+				result["Multiplicative"] = Cryptography.Multi.enc(txt, key);
+
+				if (key.length <= 2) {
+					result["RailFence"] = Enigmator.railfence.enc(txt, key);
+				}
+			}
+
+			if (onlyLettersAndSpaces(txt)) {
+				result["Baconian"] = Enigmator.baconian.enc(txt, key);
+				result["Polybius"] = Cryptography.Polybius.enc(txt);
+			}
+
+			result["A1z26"] = a1z26.enc(txt);
+			result["atbash"] = Enigmator.atbash(txt);
+			result["Phone"] = Cryptography.Phone.enc(txt);
+			result["Morse"] = Enigmator.morse.enc(txt);
+			result["Tapcode"] = Boxentriq.Tapcode.enc(txt);
+			result["Tapcode_dots"] = Boxentriq.Tapcode.enc(txt, 'dots');
+			result["Goldbug"] = Enigmator.goldbug.enc(txt);
+
+			if (document.getElementById('encodings').checked) {
+				result["Ascii"] = (new TextEncoder().encode(txt)).join(' ');
+				result["Base64"] = Enigmator.base64.enc(txt);
+				result["Base32"] = Enigmator.base32.enc(txt);
+				result["Base16"] = Enigmator.cryptanalysis.stringConvert.fromAscii(txt, 16);
+				result["Octal"] = Enigmator.cryptanalysis.stringConvert.fromAscii(txt, 8).match(/.{1,3}/g).join('');
+				result["Binary"] = toBinary(txt);
+				result["UUEncoding"] = Enigmator.uuencoding.enc(txt);
+				result["Ascii85"] = Enigmator.ascii85.enc(txt);
+				result["Rot47"] = Enigmator.rot(txt, '47');
+				result["Dec2Bin"] = decToBinary(txt);
+			}
+
+			if (document.getElementById('rotX').checked) {
+				const times = 26;
+				for (let i = 1; i < times; i++) {
+					result[`Rot.${i}`] = Enigmator.caesar(txt, i);
+				}
+			}
+
+			if (document.getElementById('baseX').checked) {
+				const times = 36;
+				for (let i = 2; i < times; i++) {
+					result[`Base.${i}`] = CyberChef.base.enc(txt, i);
+				}
+			}
+
+			if (document.getElementById('charcodeX').checked) {
+				const times = 36;
+				for (let i = 2; i < times; i++) {
+					result[`Charcode.${i}`] = CyberChef.charcode.enc(txt, i);
+				}
+			}
+
+			for (var i in result) {
+				result[i] = removeInvalid(result[i]);
+				if (!isEmpty(result[i]) && result[i] != txt)
+					element += "<resId>" + i + "</resId><resDiv><textarea id='" + i + "Res" + "' class='resTxtArea' ondblclick='copyResults(this.id)' readonly>" + result[i] + "</textarea></resDiv>";
+			};
+			document.getElementById("resContainer").insertAdjacentHTML("beforeend", element);
+		}
+
+
+
+		function btnMassDec() {
+			var result = {};
+			var element = "";
+			var txt = cipherField.value.trim();
+			var key = keyField.value.trim();
+
+			if (isEmpty(txt)) return;
+			document.getElementById("resContainer").innerHTML = "";
+
+			if (key != '') {
+				result["Vigenere"] = Enigmator.vigenere.dec(txt, key);
+				result["Autokey"] = Enigmator.autokey.dec(txt, key);
+				result["Beaufort"] = Enigmator.beaufort.enc(txt, key);
+				result["Playfair"] = Enigmator.playfair.dec(txt.replace(/[X]/g, ""), key, "J");
+				result["Simple_Substitution"] = Enigmator.substitution.dec(txt, key);
+				result["ADFGVX"] = Enigmator.adfgvx.dec(txt, key);
+				result["xor"] = Enigmator.xor.dec(txt, key);
+				result["Columnar_Transposition"] = Boxentriq.ColumnarTransposition.dec(txt, key);
+			}
+
+			if (isNumSpaces(key)) {
+				result["Hill"] = helperDecHill(txt, key);
+				let k = key.split(' ');
+				result["Affine"] = Enigmator.affine.dec(txt, k[0], k[1]);
+			}
+
+			if (isItNumber(key)) {
+				result["Caesar"] = Enigmator.caesar(txt, key);
+				result["Multiplicative"] = Cryptography.Multi.dec(txt, key);
+
+				if (key.length <= 2) {
+					result["RailFence"] = Enigmator.railfence.dec(txt, key);
+				}
+			}
+
+			if (isBacon(txt)) {
+				result["Baconian"] = Enigmator.baconian.dec(txt, key);
+			}
+
+			result["A1z26"] = a1z26.dec(txt);
+			result["atbash"] = Enigmator.atbash(txt);
+			result["Goldbug"] = Enigmator.goldbug.dec(txt);
+
+			if (isNumSpaces(txt)) {
+				result["Phone"] = Cryptography.Phone.dec(txt);
+				result["Tapcode"] = Boxentriq.Tapcode.dec(txt);
+				result["Polybius"] = Cryptography.Polybius.dec(txt);
+			}
+
+			if (isItMorse(txt)) {
+				result["Morse"] = Enigmator.morse.dec(txt);
+				result["Tapcode"] = Boxentriq.Tapcode.dec(txt, 'dots');
+			}
+
+			if (document.getElementById('encodings').checked) {
+				result["Ascii"] = String.fromCharCode.apply(this, txt.split(' '));
+				result["Base64"] = Enigmator.base64.dec(txt);
+				result["Base32"] = Enigmator.base32.dec(txt);
+				result["Base16"] = Enigmator.base16.dec(txt);
+				result["Octal"] = fromOctal(txt);
+				result["Binary"] = fromBinary(txt);
+				result["UUEncoding"] = Enigmator.uuencoding.dec(txt);
+				result["Ascii85"] = Enigmator.ascii85.dec(txt);
+				result["Rot47"] = Enigmator.rot(txt, '47');
+				result["Bin2Dec"] = binToDecimal(txt);
+			}
+
+			if (document.getElementById('rotX').checked) {
+				const times = 26;
+				for (let i = 1; i < times; i++) {
+					result[`Rot.${i}`] = Enigmator.caesar(txt, i);
+				}
+			}
+
+			if (document.getElementById('baseX').checked) {
+				const times = 36;
+				for (let i = 2; i < times; i++) {
+					result[`Base.${i}`] = CyberChef.base.dec(txt, i);
+				}
+			}
+
+			if (document.getElementById('charcodeX').checked) {
+				const times = 36;
+				for (let i = 2; i < times; i++) {
+					result[`Charcode.${i}`] = CyberChef.charcode.dec(txt, i);
+				}
+			}
+
+			for (var i in result) {
+				result[i] = removeInvalid(result[i]);
+				if (!isEmpty(result[i]) && result[i] != txt)
+					element += "<resId>" + i + "</resId><resDiv><textarea id='" + i + "Res" + "' class='resTxtArea' ondblclick='copyResults(this.id)' readonly>" + result[i] + "</textarea></resDiv>";
+			};
+			document.getElementById("resContainer").insertAdjacentHTML("beforeend", element);
+		}
+	</script>
+</body>
+</html>

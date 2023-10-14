@@ -1,0 +1,129 @@
+.blob-c {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    position: absolute;
+    z-index: -10;
+    background-color: transparent;
+    animation: blobcont 180s linear infinite;
+    -moz-animation: blobcont 420s linear infinite;
+    transform: translate3d(0,0,0);
+    will-change: transform;
+    filter: var(--mainblur)
+}
+
+.blob {
+    background: rgba(var(--accent),.35);
+    height: 860px;
+    width: 180px;
+    border-radius: 40% 50% 30% 40%;
+    animation: transform 18s ease-in-out infinite both alternate,movement_one 12s ease-in-out infinite both;
+    -moz-animation: transform 18s ease-in-out infinite both alternate,movement_one 32s ease-in-out infinite both;
+    opacity: .7;
+    position: absolute;
+    left: 2%;
+    top: 60%;
+    will-change: transform;
+    transform: translateZ(0)
+}
+
+.blob.one {
+    background: rgba(var(--accent),.33);
+    height: 250px;
+    width: 400px;
+    left: 0;
+    top: 0;
+    transform: rotate(-180deg);
+    animation: transform 8s ease-in-out infinite both alternate,movement_two 20s ease-in-out infinite both;
+    -moz-animation: transform 8s ease-in-out infinite both alternate,movement_two 40s ease-in-out infinite both;
+    will-change: transform
+}
+
+.blob.two {
+    background: rgba(var(--accent),.3);
+    height: 300px;
+    width: 600px;
+    left: 60%;
+    top: 70%;
+    transform: rotate(-180deg);
+    animation: transform 10s ease-in-out infinite both alternate,movement_two 10s ease-in-out infinite both;
+    -moz-animation: transform 10s ease-in-out infinite both alternate,movement_two 30s ease-in-out infinite both;
+    will-change: transform
+}
+
+.blob.three {
+    background: rgba(var(--accent),.44);
+    height: 150px;
+    width: 150px;
+    left: 80%;
+    top: 10%;
+    transform: rotate(-180deg);
+    animation: transform 7s ease-in-out infinite both alternate,movement_two 23s ease-in-out infinite both;
+    -moz-animation: transform 7s ease-in-out infinite both alternate,movement_two 43s ease-in-out infinite both;
+    will-change: transform
+}
+
+.blob.four {
+    background: rgba(var(--accent),.24);
+    height: 400px;
+    width: 270px;
+    left: 40%;
+    top: 25%;
+    transform: rotate(-180deg);
+    animation: transform 17s ease-in-out infinite both alternate,movement_two 13s ease-in-out infinite both;
+    -moz-animation: transform 17s ease-in-out infinite both alternate,movement_two 33s ease-in-out infinite both;
+    will-change: transform
+}
+
+.blob.five {
+    background: rgba(var(--accent),.25);
+    height: 200px;
+    width: 310px;
+    left: 30%;
+    top: 60%;
+    transform: rotate(-180deg);
+    animation: transform 12s ease-in-out infinite both alternate,movement_two 18s ease-in-out infinite both;
+    -moz-animation: transform 12s ease-in-out infinite both alternate,movement_two 38s ease-in-out infinite both;
+    will-change: transform
+}
+
+.blob.six {
+    background: rgba(var(--accent),.4);
+    height: 230px;
+    width: 80px;
+    left: 16%;
+    top: 20%;
+    transform: rotate(-180deg);
+    animation: transform 5s ease-in-out infinite both alternate,movement_two 5s ease-in-out infinite both;
+    -moz-animation: transform 5s ease-in-out infinite both alternate,movement_two 25s ease-in-out infinite both;
+    will-change: transform
+}
+
+@keyframes transform
+{
+    0%,
+  100% { border-radius: 33% 67% 70% 30% / 30% 40% 70% 70%; }
+   20% { border-radius: 37% 63% 51% 49% / 37% 35% 35% 63%; }
+   40% { border-radius: 36% 64% 64% 36% / 64% 48% 52% 26%; }
+   60% { border-radius: 37% 63% 51% 49% / 30% 30% 70% 73%; }
+   80% { border-radius: 40% 60% 42% 58% / 51% 51% 49% 59%; }
+}
+
+@keyframes movement_one
+{
+    0%,
+  100% { transform: none;}
+   50% { transform: translate(50%, 20%) rotateY(10deg) scale(1); }
+}
+
+@keyframes movement_two
+{
+    0%,
+  500% { transform: none;  }
+   50% { transform: translate(50%, 20%) rotate(-200deg) scale(1.3);}
+}
+
+@keyframes blobcont {
+	0% {transform: rotate(360deg)}
+	100% {transform: rotate(0deg)}
+}
