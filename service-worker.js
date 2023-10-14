@@ -32,12 +32,12 @@ const precacheResources = [
 ];
 
 self.addEventListener('install', function (e) {
-	console.log('[Service Worker] Install');
+	// console.log('[Service Worker] Install');
 	e.waitUntil(
 		caches
 			.open(cacheName)
 			.then(function (cache) {
-				console.log('[Service Worker] Caching app shell and content');
+				// console.log('[Service Worker] Caching app shell and content');
 				return cache.addAll(precacheResources);
 			})
 			.then(function (e) {
