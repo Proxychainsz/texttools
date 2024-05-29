@@ -1,72 +1,164 @@
-const tinyEditor = new TinyMDE.Editor({ textarea: 'textField', content: '||> Hello world!' });
+const tinyEditor = new TinyMDE.Editor({ textarea: 'textField' });
+const tinyOutput = new TinyMDE.Editor({ textarea: 'altField', content: '[|>] Output area' });
 const TinyMde = document.getElementsByClassName('TinyMDE');
-const cipherField = document.getElementById('cipherField');
-const keyField = document.getElementById('keyField');
-const textField = document.getElementById('textField');
-const altField = document.getElementById('altField');
+const undoHistory = new window.UndoRedojs(5);
+const textField = $('textField');
+const altField = $('altField');
+const cipherField = $('cipherField');
+const keyField = $('keyField');
 
-const charCounter = document.getElementById('charCount');
-const noWSpaceCounter = document.getElementById('noWSpaceCount');
-const letterCounter = document.getElementById('letterCount');
-const digitCounter = document.getElementById('digitCount');
-const selectCounter = document.getElementById('selectCount');
-const groupCounter = document.getElementById('groupCount');
+const charCounter = $('charCount');
+const noWSpaceCounter = $('noWSpaceCount');
+const letterCounter = $('letterCount');
+const digitCounter = $('digitCount');
+const selectCounter = $('selectCount');
+const groupCounter = $('groupCount');
+const undoCounter = $('undoCounter');
 
 tinyEditor.addEventListener('change', e => {
 	charCounter.innerHTML = (textField.value.match(/(.|\n|\r)/g) || []).length;
 	noWSpaceCounter.innerHTML = (textField.value.match(/\S/g) || []).length;
 	letterCounter.innerHTML = (textField.value.match(/[a-z]/gi) || []).length;
 	digitCounter.innerHTML = (textField.value.match(/\d/g) || []).length;
-	if (textField.value == '') groupCounter.innerHTML = '0';
+	if (!textField.value) groupCounter.innerHTML = '0';
 	else groupCounter.innerHTML = (textField.value.trim().split(/\s+/) || []).length;
 
-	localStorage.setItem('text', textField.value);
-});
-
-// TinyMde[0].addEventListener('input', () => {
-// 	updateHistory();
-// });
-
-TinyMde[0].addEventListener('keydown', function (e) {
-	if (e.key == 'Tab') {
-		e.preventDefault();
-		document.execCommand('insertText', false, '\t');
+	if (undoHistory.current() !== textField.value) {
+		if (textField.value.length - undoHistory.current().length > 1 || textField.value.length - undoHistory.current().length < -1 || textField.value.length - undoHistory.current().length === 0) {
+			undoHistory.record(textField.value, true);
+		} else {
+			undoHistory.record(textField.value);
+		}
 	}
+
+	undoCounter.innerHTML = undoHistory.currentIndex - 1;
+	if (undoCounter.innerHTML <= 0) {
+		undoCounter.style.visibility = 'hidden';
+	} else {
+		undoCounter.style.visibility = 'visible';
+	}
+
+	localStorage.setItem('text', lenTrim(textField.value));
 });
 
 let outField = textField;
 let tOutput = false;
 function altToggle() {
-	const el = document.getElementById('midAlt');
-	const af = document.getElementById('altFloats');
+	const el = $('midAlt');
+	const af = $('altFloats');
+	const to = $('tOutput');
 	if (tOutput) {
 		af.style.width = '28px';
 		el.classList.add('altFadeOut');
 		el.classList.remove('altFadeIn');
+		to.style.visibility = 'hidden';
 		outField = textField;
 		tOutput = false;
 	} else {
 		af.style.width = '100%';
 		el.classList.add('altFadeIn');
 		el.classList.remove('altFadeOut');
+		to.style.visibility = 'visible';
 		outField = altField;
 		tOutput = true;
 	}
 }
 
-let tSize = true;
+let tSize = false;
 function toggleSize() {
-	const el = document.getElementById('page_right');
+	const el = $('page_right');
 	el.style.transition = 'all 0.5s ease-in-out';
 
 	if (tSize) {
 		el.style.width = '100%';
 		tSize = false;
 	} else {
-		el.style.width = '0px';
+		el.style.width = '0dvw';
 		tSize = true;
 	}
 }
+
+function updateHistory() {
+	textField.dispatchEvent(new Event('input'));
+}
+
+function updateInput() {
+	if (tOutput) tinyOutput.setContent(altField.value);
+	tinyEditor.setContent(textField.value);
+}
+
+function undoButton(e) {
+	if (undoHistory.undo(true) !== undefined && undoHistory.currentIndex > 1) {
+		let sel = tinyEditor.getSelection();
+
+		if (sel !== null) {
+			let a = sel['col'];
+			let b = textField.value.length;
+			let c = undoHistory.undo(true).length;
+
+			if (b >= c) {
+				sel['col'] = a - (b - c);
+			} else {
+				sel['col'] = a + (c - b);
+			}
+		}
+		textField.value = undoHistory.undo();
+		updateInput();
+
+		setTimeout(() => {
+			TinyMde[0].focus();
+			if (sel !== null && sel['col'] >= 0) tinyEditor.setSelection(sel);
+		}, 1);
+	}
+}
+
+function redoButton() {
+	if (undoHistory.redo(true) !== undefined) {
+		let sel = tinyEditor.getSelection();
+		let b = textField.value.length;
+		let c = undoHistory.redo(true).length;
+
+		textField.value = undoHistory.redo();
+		updateInput();
+
+		if (sel !== null) {
+			let a = sel['col'];
+
+			if (c >= b) {
+				sel['col'] = a + (c - b);
+			} else {
+				sel['col'] = a + (b - c);
+			}
+
+			setTimeout(() => {
+				TinyMde[0].focus();
+				if (sel !== null && sel['col'] >= 0) tinyEditor.setSelection(sel);
+			}, 1);
+		}
+	}
+}
+
+document.onkeydown = KeyPressDown;
+function KeyPressDown(e) {
+	if (e.ctrlKey) {
+		if (e.keyCode == 89) redoButton(); // Y
+		if (e.keyCode == 90) undoButton(); // Z
+		if (e.keyCode == 65 || e.keyCode == 97) selectCount(); // a A
+	}
+
+	if (e.target.classList[0] == 'TinyMDE' && e.key == 'Tab') {
+		e.preventDefault();
+		document.execCommand('insertText', false, '\t');
+	}
+}
+
+tinyEditor.addEventListener('selection', e => {
+	let st = `${e.focus ? e.focus.row : '–'} : ${e.focus ? e.focus.col : '–'}`;
+	for (let command in e.commandState) {
+		if (e.commandState[command]) st = command.concat(' ', st);
+	}
+	$('tSelect').innerHTML = st;
+});
 
 function selectCount() {
 	selectCounter.innerHTML = window.getSelection().toString().length;
@@ -83,61 +175,28 @@ function selectReset(e) {
 	selectCounter.innerHTML = '0';
 }
 
-const undoHistory = [];
-const redoHistory = [];
-function updateHistory() {
-	undoHistory.push(textField.value);
-}
-
-function updateInput() {
-	tinyEditor.setContent(textField.value);
-}
-
-function undoButton() {
-	if (undoHistory.slice(-1)[0]) {
-		redoHistory.push(textField.value);
-		textField.value = undoHistory.slice(-1)[0];
-		undoHistory.pop();
-		updateInput();
-	}
-}
-
-function redoButton() {
-	if (redoHistory.slice(-1)[0]) {
-		updateHistory();
-		textField.value = redoHistory.slice(-1)[0];
-		redoHistory.pop();
-		updateInput();
-	}
-}
-
-document.onkeydown = KeyPressDown;
-function KeyPressDown(e) {
-	if (e.ctrlKey) {
-		if (e.keyCode == 89) redoButton(); // Y
-		if (e.keyCode == 90) undoButton(); // Z
-		if (e.keyCode == 65 || e.keyCode == 97) selectCount(); // a  A
-	}
+function $(e) {
+	return document.getElementById(e);
 }
 
 function copyMessageFrom() {
-	if (textField.value == '') return;
-	cipherField.value = textField.value.trim();
+	if (!outField.value) return;
+	cipherField.value = outField.value.trim();
 }
 
 function copyMessageTo() {
-	if (cipherField.value == '') return;
+	if (!cipherField.value) return;
 	updateHistory();
 	textField.value += `\n${cipherField.value}`;
 	updateInput();
 }
 
 function copyResults(id) {
-	const resultField = document.getElementById(id);
+	const resultField = $(id);
 	if (!/\S/.test(resultField.value)) return;
 
 	cipherField.animate([{ color: '#ffffff00' }, { color: '#ffffffc3' }], {
-		duration: 250,
+		duration: 280,
 		iterations: 1,
 	});
 	cipherField.value = resultField.value;
@@ -168,6 +227,10 @@ function binToDecimal(n) {
 	return res.join(' ');
 }
 
+function binFlip(txt) {
+	return txt.replace(/(0)|1/g, (_, a) => (a ? '1' : '0'));
+}
+
 function fromOctal(n) {
 	n = n.split(' ');
 	if (n.length == 1) {
@@ -190,7 +253,7 @@ function fibonacci(num) {
 	res.push(y);
 
 	let i = 2;
-	while (i < num || z < num) {
+	while (y < num) {
 		z = x + y;
 		x = y;
 		y = z;
@@ -198,6 +261,17 @@ function fibonacci(num) {
 		i += 1;
 	}
 	return res;
+}
+
+function extractFibo(input) {
+	input = input.split(/\s+|\n/);
+	let fib = fibonacci(input.length);
+	const res = [];
+
+	fib = fib.map(x => x - 1); // array 1 xd
+	fib.forEach(i => res.push(input[i]));
+
+	return res.filter(x => x !== undefined).join(' ');
 }
 
 // https://github.com/0xbalazstoth/javascript-a1z26/blob/main/a1z26.js
@@ -230,6 +304,39 @@ const a1z26 = {
 	},
 };
 
+const base26 = {
+	enc(string, v) {
+		let res = [];
+		string
+			.toUpperCase()
+			.split(' ')
+			.map(string => {
+				if (!/[A-Z]/.test(string)) return;
+
+				let number = 0;
+				for (let i = 0; i < string.length; i++) {
+					if (!/[A-Z]/.test(string)) console.log(string);
+					const char = string[string.length - i - 1];
+					number += 26 ** i * charToDecimal(char, v);
+				}
+				res.push(number);
+			});
+		return res.join(' ').trim();
+	},
+	dec(number, v) {
+		let res = [];
+		number.split(' ').map(number => {
+			let string = '';
+			while (number > 0) {
+				string = toChar(number % 26 || 26, v) + string;
+				number = Math.floor((number - v) / 26);
+			}
+			res.push(string);
+		});
+		return res.join(' ').trim();
+	},
+};
+
 /* --------------------------------------------
 	Buttons
 -------------------------------------------- */
@@ -240,7 +347,7 @@ btnCopyTextField.onclick = () => {
 };
 
 btnAltCopy.onclick = () => {
-	if (altField.value == '') return;
+	if (!altField.value) return;
 	updateHistory();
 	textField.value = altField.value;
 	updateInput();
@@ -513,9 +620,7 @@ btnCalculate.onclick = () => {
 	const input = textField.value;
 	const op = calcOP.value;
 	const val = Number(calcValue.value) || 0;
-	// const reg = /(?<=^| )\d+(\.\d+)?(?=$| )|(?<=^| )\.\d+(?=$| )/;
 	const reg = /(?<=^| )[+-]?\d+([eE]?[+-]?\d+)?(\.\d+([eE]?[+-]?\d+)?)?(?=$| )|(?<=^| )\.\d+(?=$| )/;
-	// const reg = /(?:^|\s)[-+]?(\d*\.?\d+|\d{1,3}(?:,\d{3})*(?:\.\d+[eE]?[+-]?\d+)?)(?!\S)/;
 	let res = '';
 
 	switch (op) {
@@ -533,7 +638,6 @@ btnCalculate.onclick = () => {
 				.split(' ')
 				.map(n => {
 					if (reg.test(n)) {
-						// console.log(n, reg.test(n));
 						return calculate[op](+n, val);
 					}
 					return n;
@@ -547,7 +651,7 @@ btnCalculate.onclick = () => {
 };
 
 calcOP.onchange = () => {
-	var el = document.getElementById('calcValue');
+	var el = $('calcValue');
 	if (calcOP.selectedIndex >= 7 && calcOP.selectedIndex <= 10) {
 		el.hidden = true;
 	} else {
@@ -557,7 +661,7 @@ calcOP.onchange = () => {
 
 btnBinaryFlip.onclick = () => {
 	updateHistory();
-	outField.value = textField.value.replace(/(0)|1/g, (_, a) => (a ? '1' : '0'));
+	outField.value = binFlip(textField.value);
 	updateInput();
 };
 
@@ -593,14 +697,7 @@ btnAddLines.onclick = () => {
 
 btnFibonacci.onclick = () => {
 	updateHistory();
-	const input = textField.value.split(/\s+|\n/);
-	let fib = fibonacci(input.length);
-	const res = [];
-
-	fib = fib.map(x => x - 1); // array 1 xd
-	fib.forEach(i => res.push(input[i]));
-
-	outField.value = res.filter(x => x !== undefined).join(' ');
+	outField.value = extractFibo(textField.value);
 	updateInput();
 };
 
@@ -637,9 +734,9 @@ function removeInvalid(txt) {
 	const res = txt
 		.toString()
 		.replace(invalidList, '')
-		.replace(/NaN/g, '?')
+		.replace(/NaN/g, '')
 		.replace(/^[?\s]*$/, '');
-	return res;
+	return res.trim();
 }
 
 function isEmpty(e) {
@@ -663,10 +760,9 @@ function regexpEscape(str) {
 }
 
 function lenTrim(str, max) {
-	max = max || 500000;
+	max = max || 200000;
 	if (str.length > max) {
 		console.log('Input length (', str.length, ') exceeds (', max, ') truncating to prevent browser from crashing.');
-		// return str.substring(0, max);
 		return str.slice(0, max);
 	}
 	return str;
@@ -688,15 +784,22 @@ function hillParser(key) {
 		size = 3;
 		key = key.slice(0, 9);
 	} else return;
-
 	return to2dArray(key, size);
+}
+
+function charToDecimal(letter, v) {
+	return letter.codePointAt(0) - 'A'.codePointAt(0) + v;
+}
+
+function toChar(number, v) {
+	return String.fromCodePoint('A'.codePointAt(0) - v + number);
 }
 
 // Page resizer: https://stackoverflow.com/a/55202728
 function dragElement(element, direction) {
 	let md; // remember mouse down info
-	const first = document.getElementById('page_left');
-	const second = document.getElementById('page_right');
+	const first = $('page_left');
+	const second = $('page_right');
 
 	element.onmousedown = onMouseDown;
 
@@ -731,7 +834,7 @@ function dragElement(element, direction) {
 		}
 	}
 }
-dragElement(document.getElementById('separator'), 'H');
+dragElement($('separator'), 'H');
 
 // Text scrambler: https://stackoverflow.com/a/76258145
 const randomString = (n, r = '') => {
@@ -776,12 +879,12 @@ const scrambler = el => {
 document.querySelectorAll('[data-scramble]').forEach(scrambler);
 
 function openModal() {
-	const dialogDiv = document.getElementById('dialog');
+	const dialogDiv = $('dialog');
 	dialogDiv.style.opacity = '1';
 	window.dialog.showModal();
 }
 window.onclick = function (event) {
-	const dialogDiv = document.getElementById('dialog');
+	const dialogDiv = $('dialog');
 	if (event.target == dialogDiv) {
 		dialogDiv.style.opacity = '0';
 		window.dialog.close();
@@ -805,7 +908,7 @@ const RGBToHSL = (r, g, b) => {
 };
 
 function bgSet(img) {
-	const bgElement = document.getElementById('bgElement');
+	const bgElement = $('bgElement');
 	bgElement.crossOrigin = `Anonymous`;
 	bgElement.src = img;
 	let hsl = [];
@@ -814,12 +917,10 @@ function bgSet(img) {
 		hsl = bgGetColor(bgElement);
 		document.documentElement.style.setProperty('--h', hsl[0]);
 		document.documentElement.style.setProperty('--s', hsl[1]);
-		document.documentElement.style.setProperty('--c', hsl[2]);
 
 		localStorage.setItem('usrbg', img);
 		localStorage.setItem('h', hsl[0]);
 		localStorage.setItem('s', hsl[1]);
-		localStorage.setItem('c', hsl[2]);
 	};
 }
 
@@ -828,20 +929,19 @@ function bgGetColor(bgElement) {
 	const hsl = RGBToHSL(rgb[0], rgb[1], rgb[2]);
 	const h = Math.round(hsl[0]);
 	const s = Math.round(hsl[1]);
-	const c = complementary(h, s);
-	return [h, `${s}%`, c];
+	return [h, `${s}%`];
 }
 
 function complementary(h, s) {
 	h += s;
-	h = calculate.mod(h, 360);
+	h = calculate.mod(h, 180);
 	return h;
 }
 
 function processImage(base64) {
 	return new Promise((resolve, reject) => {
 		document.documentElement.style.cursor = 'wait';
-		const maxFileSize = 30000;
+		const maxFileSize = 333666;
 		const img = new Image();
 		img.crossOrigin = `Anonymous`;
 		img.onload = function () {
@@ -851,7 +951,7 @@ function processImage(base64) {
 			let { height } = img;
 			let resizedBase64 = null;
 			while (resizedBase64 == null) {
-				console.log(`usrBG: width: ${width} height: ${height}`);
+				console.log(`usrBG: ${width} x ${height}`);
 				canvas.width = width;
 				canvas.height = height;
 				ctx.drawImage(img, 0, 0, width, height);
@@ -862,7 +962,7 @@ function processImage(base64) {
 					resizedBase64 = canvas.toDataURL('image/jpg');
 				}
 			}
-			console.log(`Saved usrBG: ${width}x${height}`);
+			console.log(`Saved usrBG: ${width} x ${height}`);
 			document.documentElement.style.cursor = '';
 			resolve(resizedBase64);
 			canvas.remove();
@@ -874,25 +974,35 @@ function processImage(base64) {
 }
 
 dialogURL.onclick = () => {
-	const imgURL = document.getElementById('inputBgURL').value || dailyBG;
+	const imgURL = $('inputBgURL').value || dailyBG;
+	const ext = /(.*?)\.(gif|webp|webm)/i;
+
 	if (imgURL == dailyBG) {
 		localStorage.setItem('random', 'true');
 	} else {
 		localStorage.removeItem('random');
 	}
-	processImage(imgURL).then(bgSet);
+
+	if (ext.test(imgURL)) {
+		bgSet(imgURL);
+	} else processImage(imgURL).then(bgSet);
 };
 
 dialogFile.onchange = () => {
-	const file = document.getElementById('dialogFile').files[0];
+	const file = $('dialogFile').files[0];
 	const imgFile = new FileReader();
+	const ext = /(.*?)\.(gif|webp)/i;
 	let baseString;
 
 	imgFile.onloadend = function () {
 		baseString = imgFile.result;
 		localStorage.removeItem('random');
-		processImage(baseString).then(bgSet);
+
+		if (ext.test(file.name) && baseString.length < 5000000) {
+			bgSet(baseString);
+		} else processImage(baseString).then(bgSet);
 	};
+
 	imgFile.readAsDataURL(file);
 };
 
@@ -906,7 +1016,7 @@ function massEncode() {
 	let element = '';
 
 	if (isEmpty(txt)) return;
-	document.getElementById('resContainer').innerHTML = '';
+	$('resContainer').innerHTML = '';
 
 	if (!isNumSpaces(key) && key != '') {
 		result.Vigenere = Enigmator.vigenere.enc(txt, key);
@@ -944,11 +1054,14 @@ function massEncode() {
 	result.Tapcode = Boxentriq.Tapcode.enc(txt);
 	result.Tapcode_Dots = Boxentriq.Tapcode.enc(txt, 'dots');
 	result.Goldbug = Enigmator.goldbug.enc(txt);
+	result.Reversed = txt.split('').reverse().join('');
 
-	if (document.getElementById('encodings').checked) {
+	if ($('encodings').checked) {
 		result.Ascii = new TextEncoder().encode(txt).join(' ');
 		result.Base64 = Enigmator.base64.enc(txt);
 		result.Base32 = Enigmator.base32.enc(txt);
+		result.Base26_0 = base26.enc(txt, 0);
+		result.Base26_1 = base26.enc(txt, 1);
 		result.Base16 = Enigmator.cryptanalysis.stringConvert.fromAscii(txt, 16);
 		result.Octal = Enigmator.cryptanalysis.stringConvert
 			.fromAscii(txt, 8)
@@ -956,26 +1069,29 @@ function massEncode() {
 			.join('');
 		result.Binary = toBinary(txt);
 		result.Dec2Bin = decToBinary(txt);
+		result.Binary_Flip = binFlip(txt.replace(/[^0-1 ]/g, '').replace(/\s\s+/g, ' '));
+		result.Baudot_v1 = Boxentriq.baudot.enc(txt, 'v1');
+		result.Baudot_v2 = Boxentriq.baudot.enc(txt, 'v2');
 		result.UUEncoding = Enigmator.uuencoding.enc(txt);
 		result.Ascii85 = Enigmator.ascii85.enc(txt);
 		result.Rot47 = Enigmator.rot(txt, '47');
 	}
 
-	if (document.getElementById('rotX').checked) {
+	if ($('rotX').checked) {
 		const times = 26;
 		for (let i = 1; i < times; i++) {
 			result[`Rot.${i}`] = Enigmator.caesar(txt, i);
 		}
 	}
 
-	if (document.getElementById('baseX').checked) {
+	if ($('baseX').checked) {
 		const times = 37;
 		for (let i = 2; i < times; i++) {
 			result[`Base.${i}`] = CyberChef.base.enc(txt, i);
 		}
 	}
 
-	if (document.getElementById('charcodeX').checked) {
+	if ($('charcodeX').checked) {
 		const times = 37;
 		for (let i = 2; i < times; i++) {
 			result[`Charcode.${i}`] = CyberChef.charcode.enc(txt, i);
@@ -987,7 +1103,7 @@ function massEncode() {
 		if (!isEmpty(result[i]) && result[i] != txt)
 			element += `<resId>${i.replace('_', ' ')}</resId><resDiv><textarea id='${i}Res' class='resTxtArea' ondblclick='copyResults(this.id)' readonly>${result[i]}</textarea></resDiv>`;
 	}
-	document.getElementById('resContainer').insertAdjacentHTML('beforeend', element);
+	$('resContainer').insertAdjacentHTML('beforeend', element);
 }
 
 function massDecode() {
@@ -997,7 +1113,7 @@ function massDecode() {
 	let element = '';
 
 	if (isEmpty(txt)) return;
-	document.getElementById('resContainer').innerHTML = '';
+	$('resContainer').innerHTML = '';
 
 	if (key != '') {
 		result.Vigenere = Enigmator.vigenere.dec(txt, key);
@@ -1032,6 +1148,8 @@ function massDecode() {
 	result.A1z26 = a1z26.dec(txt);
 	result.Atbash = Enigmator.atbash(txt);
 	result.Goldbug = Enigmator.goldbug.dec(txt);
+	result.Reversed = txt.split('').reverse().join('');
+	result.Fibonacci = extractFibo(txt);
 
 	if (isNumSpaces(txt)) {
 		result.Phone = Cryptography.Phone.dec(txt);
@@ -1044,34 +1162,39 @@ function massDecode() {
 		result.Tapcode = Boxentriq.Tapcode.dec(txt, 'dots');
 	}
 
-	if (document.getElementById('encodings').checked) {
+	if ($('encodings').checked) {
 		result.Ascii = String.fromCharCode.apply(this, txt.split(' '));
 		result.Base64 = Enigmator.base64.dec(txt);
 		result.Base32 = Enigmator.base32.dec(txt);
+		result.Base26_0 = base26.dec(txt, 0);
+		result.Base26_1 = base26.dec(txt, 1);
 		result.Base16 = Enigmator.base16.dec(txt);
 		result.Octal = fromOctal(txt);
 		result.Binary = fromBinary(txt);
-		result.Bin2Dec = binToDecimal(txt);
+		result.Bin2Dec = binToDecimal(txt).replace(/\s\s+/g, '');
+		result.Binary_Flip = binFlip(txt.replace(/[^0-1 ]/g, '').replace(/\s\s+/g, ' '));
+		result.Baudot_v1 = Boxentriq.baudot.dec(txt, 'v1');
+		result.Baudot_v2 = Boxentriq.baudot.dec(txt, 'v2');
 		result.UUEncoding = Enigmator.uuencoding.dec(txt);
 		result.Ascii85 = Enigmator.ascii85.dec(txt);
 		result.Rot47 = Enigmator.rot(txt, '47');
 	}
 
-	if (document.getElementById('rotX').checked) {
+	if ($('rotX').checked) {
 		const times = 26;
 		for (let i = 1; i < times; i++) {
 			result[`Rot.${i}`] = Enigmator.caesar(txt, i);
 		}
 	}
 
-	if (document.getElementById('baseX').checked) {
+	if ($('baseX').checked) {
 		const times = 37;
 		for (let i = 2; i < times; i++) {
 			result[`Base.${i}`] = CyberChef.base.dec(txt, i);
 		}
 	}
 
-	if (document.getElementById('charcodeX').checked) {
+	if ($('charcodeX').checked) {
 		const times = 37;
 		for (let i = 2; i < times; i++) {
 			result[`Charcode.${i}`] = CyberChef.charcode.dec(txt, i);
@@ -1083,5 +1206,5 @@ function massDecode() {
 		if (!isEmpty(result[i]) && result[i] != txt)
 			element += `<resId>${i.replace('_', ' ')}</resId><resDiv><textarea id='${i}Res' class='resTxtArea' ondblclick='copyResults(this.id)' readonly>${result[i]}</textarea></resDiv>`;
 	}
-	document.getElementById('resContainer').insertAdjacentHTML('beforeend', element);
+	$('resContainer').insertAdjacentHTML('beforeend', element);
 }

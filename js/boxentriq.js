@@ -89,7 +89,6 @@ var Boxentriq = {
 
 			var grid = this.generateGrid(key, columns, columnorder);
 
-			// document.getElementById("grid").innerHTML = grid;
 			return dst;
 		},
 
@@ -114,7 +113,6 @@ var Boxentriq = {
 
 			var grid = this.generateGrid(key, columns, columnorder);
 
-			// document.getElementById("grid").innerHTML = grid;
 			return dst;
 		},
 
@@ -165,6 +163,72 @@ var Boxentriq = {
 			}
 
 			return grid;
+		},
+	},
+
+	baudot: {
+		letters1: ['*NUL*', 'A', 'E', '\r', 'Y', 'U', 'I', 'O', '*FIGURES*', 'J', 'G', 'H', 'B', 'C', 'F', 'D', ' ', '\n', 'X', 'Z', 'S', 'T', 'W', 'V', '*DEL*', 'K', 'M', 'L', 'R', 'Q', 'N', 'P'],
+		figures1: ['*NUL*', '1', '2', '\r', '3', '4', '', '5', ' ', '6', '7', '+', '8', '9', '', '0', '*LETTERS*', '\n', ',', ':', '.', '', '?', "'", '*DEL*', '(', ')', '=', '-', '/', '', '%'],
+		letters2: ['*NUL*', 'E', '\n', 'A', ' ', 'S', 'I', 'U', '\r', 'D', 'R', 'J', 'N', 'F', 'C', 'K', 'T', 'Z', 'L', 'W', 'H', 'Y', 'P', 'Q', 'O', 'B', 'G', '*FIGURES*', 'M', 'X', 'V', '*LETTERS*'],
+		figures2: ['*NUL*', '3', '\n', '-', ' ', "'", '8', '7', '\r', '*ENQUIRY*', '4', '*BELL*', ',', '!', ':', '(', '5', '+', ')', '2', '$', '6', '0', '1', '9', '?', '&', '*FIGURES*', '.', '/', ';', '*LETTERS*'],
+
+		enc(src, variant) {
+			var letters = variant == 'v1' ? this.letters1 : this.letters2;
+			var figures = variant == 'v1' ? this.figures1 : this.figures2;
+			var figureMode = false;
+			var switchToLetters = variant == 'v1' ? '10000' : '11111';
+			var switchToFigures = variant == 'v1' ? '01000' : '11011';
+
+			var dst = '';
+			var sep = '';
+			for (var i = 0; i < src.length; i++) {
+				var index = letters.indexOf(src[i].toUpperCase());
+				if (index != -1) {
+					if (figureMode) {
+						figureMode = false;
+						dst += sep + switchToLetters + ' ';
+						sep = ' ';
+					}
+				} else {
+					index = figures.indexOf(src[i].toUpperCase());
+					if (index != -1) {
+						if (!figureMode) {
+							figureMode = true;
+							dst += sep + switchToFigures + ' ';
+							sep = ' ';
+						}
+					}
+				}
+
+				if (index != -1) {
+					dst += sep + ('0000' + index.toString(2)).slice(-5);
+					sep = ' ';
+				}
+			}
+
+			return dst;
+		},
+
+		dec(src, variant) {
+			var letters = variant == 'v1' ? this.letters1 : this.letters2;
+			var figures = variant == 'v1' ? this.figures1 : this.figures2;
+			var switchToLetters = variant == 'v1' ? 16 : 31;
+			var switchToFigures = variant == 'v1' ? 8 : 27;
+			var dst = '';
+			var figureMode = false;
+
+			src = src.replace(/[^01]+/g, '');
+			for (var i = 0; i + 5 <= src.length; i += 5) {
+				var index = parseInt(src.substr(i, 5), 2);
+				if (index == switchToFigures) figureMode = true;
+				else if (index == switchToLetters) figureMode = false;
+				else {
+					if (figureMode) dst += figures[index];
+					else dst += letters[index];
+				}
+			}
+
+			return dst;
 		},
 	},
 };

@@ -25,25 +25,29 @@
 }
 
 .TMMark_TMCode {
-	color: rgb(255, 185, 136);
+	color: var(--color2);
 }
 
 .TMFencedCodeBacktick,
 .TMFencedCodeTilde,
-.TMIndentedCode,
 .TMCode {
 	padding-left: 4px;
 	background-color: #0000003c;
 }
 
+.TMIndentedCode {
+	margin-left: -10px;
+	background-color: #0000001f;
+}
+
 .TMCodeFenceBacktickOpen,
 .TMCodeFenceTildeOpen {
-	border-bottom: 1px solid var(--accent-0);
+	border-bottom: thin solid var(--color1-2);
 }
 
 .TMCodeFenceBacktickClose,
 .TMCodeFenceTildeClose {
-	border-top: 1px solid var(--accent-0);
+	border-top: thin solid var(--color1-2);
 }
 
 .TMInfoString {
@@ -53,8 +57,9 @@
 }
 
 .TMCode {
-	border: 1px solid #c0c0c0;
-	border-radius: 2pxrgb (255, 0, 0);
+	border: thin solid #c0c0c07f;
+	border-radius: 2px rgb(255, 0, 0);
+	padding-right: 4px;
 }
 
 .TMBlockquote {
@@ -66,28 +71,29 @@
 
 .TMMark {
 	color: #a0a0a0;
+	font-size: 120%;
 }
 
 .TMMark_TMH1,
 .TMMark_TMH2 {
-	color: #ff8080;
+	color: var(--color4);
 	font-weight: 700;
 }
 
 .TMMark_TMUL,
 .TMMark_TMOL {
-	color: #ff9748;
+	color: var(--color2);
 	font-weight: 700;
 }
 
 .TMImage {
 	/* text-decoration: underline; */
-	text-decoration-color: #00ff00;
+	text-decoration-color: var(--color4);
 }
 
 .TMLink {
 	/* text-decoration: underline; */
-	text-decoration-color: #0088ff;
+	text-decoration-color: var(--color2);
 }
 
 /* .TMLinkLabel {
@@ -96,11 +102,11 @@
 
 .TMLinkLabel_Definition,
 .TMLinkLabel_Valid {
-	color: #40c040;
+	color: var(--color3);
 }
 
 .TMLinkLabel_Invalid {
-	color: #0088ff;
+	color: var(--color3);
 	font-weight: 700;
 }
 
@@ -110,7 +116,7 @@
 
 .TMLinkDestination,
 .TMAutolink {
-	color: #6f6fff;
+	color: var(--color4);
 }
 
 .TMHR {
@@ -127,18 +133,20 @@
 	z-index: 0;
 }
 
-.TMHTML,
-.TMHTMLBlock {
-	color: #f961c9;
+.TMHTML {
+	color: var(--color2);
+	font-weight: 600;
+	text-shadow: 0 0 2px rgb(0, 0, 0);
 }
 
 .TMHTMLBlock {
-	color: #ff3f7c;
+	color: var(--color3);
 }
 
 .TMNumbers {
-	color: var(--accent-b2);
-	text-shadow: 0 0 2px rgb(0, 0, 0);
+	color: var(--color1-5a);
+	text-shadow: 0 0 2px rgb(0,0,0);
+	font-weight: 600;
 }
 
 .TMStrikethrough {

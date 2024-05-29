@@ -1,30 +1,37 @@
 :root {
-	--h: 220;
-	--s: 10%;
-	--c: 14;
+	--h: 355;
+	--s: 12%;
 
-	--black: hsl(0, 0%, 15%);
-	--white: hsl(0, 0%, 100%);
-	--gray-500: hsl(0, 0%, 35%);
-	--gray-700: hsl(0, 0%, 60%);
-	--gray-900: hsl(0, 0%, 85%);
+	--h2: calc(var(--h) + 90);
+	--h3: calc(var(--h) + 180);
+	--h4: calc(var(--h) + 270);
 
-	--accent-x: hsl(var(--h), var(--s), 45%);
-	--accent-0: hsl(var(--h), var(--s), 60%);
-	--accent-1: hsl(var(--h), 30%, 75%);
-	--accent-2: hsl(var(--h), 20%, 25%);
-	--accent-a1: hsla(var(--h), 30%, 50%, 1);
-	--accent-a2: hsla(var(--h), 30%, 50%, 0.5);
-	--accent-a3: hsla(var(--h), 30%, 50%, 0.35);
-	--accent-b1: hsla(var(--h), 30%, 80%, 0.9);
-	--accent-b2: hsla(var(--h), 100%, 70%, 1);
-	--secondary-1: hsla(var(--c), 90%, 60%, 1);
-	--black-a1: hsla(0, 0%, 0%, 0.6);
-	--black-a2: hsla(0, 0%, 0%, 0.15);
-	--black-a3: hsla(0, 0%, 0%, 0.35);
-	--white-a1: hsla(0, 0%, 50%, 0.2);
-	--white-a2: hsla(0, 1%, 70%, 0.6);
-	--white-a3: hsla(0, 8%, 85%, 0.8);
+	--color1: hsla(var(--h), 80%, 60%, 1);
+	--color2: hsla(var(--h2), 80%, 60%, 1);
+	--color3: hsla(var(--h3), 80%, 60%, 1);
+	--color4: hsla(var(--h4), 80%, 60%, 1);
+
+	--color1-0: hsl(var(--h), var(--s), 45%);
+	--color1-1: hsl(var(--h), var(--s), 60%);
+	--color1-2: hsl(var(--h), 30%, 75%);
+	--color1-3: hsl(var(--h), 20%, 25%);
+
+	--color1-0a: hsla(var(--h), 30%, 50%, 1);
+	--color1-1a: hsla(var(--h), 30%, 50%, .5);
+	--color1-2a: hsla(var(--h), 30%, 50%, .35);
+	--color1-3a: hsla(var(--h), 30%, 80%, .9);
+	--color1-4a: hsla(var(--h), 100%, 70%, 1);
+	--color1-5a: hsla(var(--h), 90%, 70%, .9);
+
+	--color3-0: hsla(var(--h3), 90%, 60%, 1);
+	--color3-1: hsla(var(--h3), 90%, 60%, .25);
+
+	--black-a1: hsla(0, 0%, 0%, .6);
+	--black-a2: hsla(0, 0%, 0%, .15);
+	--black-a3: hsla(0, 0%, 0%, .35);
+	--white-a1: hsla(0, 0%, 50%, .2);
+	--white-a2: hsla(0, 1%, 70%, .6);
+	--white-a3: hsla(0, 8%, 85%, .8);
 
 	--shadowOff: shadowOff 10s ease forwards;
 }
@@ -119,7 +126,7 @@ a:link,
 a:visited,
 a:focus,
 a:active {
-	color: var(--accent-b1);
+	color: var(--color1-3a);
 	font-size: 12px;
 	text-decoration: none;
 	color: inherit;
@@ -127,12 +134,12 @@ a:active {
 
 a:hover {
 	color: #fff;
-	text-decoration: underline var(--accent-1);
-	text-shadow: 0 0 3px var(--accent-0);
+	text-decoration: underline var(--color1-2);
+	text-shadow: 0 0 3px var(--color1-1);
 }
 
 ::selection {
-	background: var(--accent-a1);
+	background: var(--color1-2a);
 }
 
 button::-moz-focus-inner,
@@ -165,18 +172,18 @@ textarea::-webkit-scrollbar,
 }
 
 ::-webkit-scrollbar-thumb {
-	background-color: var(--accent-a2);
+	background-color: var(--color1-1a);
 	outline: none;
 	border: 0;
 	border-radius: 50px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-	background-color: var(--accent-x);
+	background-color: var(--color1-0);
 }
 
 ::placeholder {
-	color: var(--accent-a1);
+	color: var(--color1-0a);
 	opacity: 1;
 }
 
@@ -236,7 +243,7 @@ input[type='search']::-webkit-search-cancel-button {
 	overflow-y: auto;
 	overflow-x: hidden;
 	min-width: 0px;
-	width: 0;
+	width: 100%;
 	max-width: 99%;
 	flex: 1 1 auto;
 	pointer-events: all;
@@ -261,25 +268,45 @@ input[type='search']::-webkit-search-cancel-button {
 
 toggleSize {
 	content: '';
-	position: absolute;
+	position: relative;
 	background-color: var(--white-a1);
 	top: 80dvh;
 	margin-left: -12px;
-	width: 12px;
+	min-width: 12px;
+	max-width: 12px;
 	height: 82px;
 	border-radius: 16px 0 0 16px;
 	color: var(--black-a1);
-	/* z-index: 5; */
 	cursor: pointer;
+	font-weight: 700;
 
 	&:hover {
-		background-image: linear-gradient(to right, var(--accent-a3), transparent 80%, transparent);
+		background-image: linear-gradient(to right, var(--color1-1a), transparent 100%, transparent);
+	}
+
+	&::after {
+		position: relative;
+		display: block;
+		content: "T O G G L E";
+		color: rgba(189, 189, 189, 0.092);
+		font-size: 9px;
+		writing-mode: vertical-lr;
+		transform: rotate(180deg);
+		margin-top: 140%;
+		min-width: 100%;
+		max-width: 100%;
+		left: 5px;
+	}
+
+	&:hover::after {
+		color: var(--color1-0);
 	}
 }
 
+
 input,
 select {
-	color: var(--accent-1);
+	color: var(--color1-2);
 	width: 110px;
 	cursor: auto;
 	height: 100%;
@@ -289,6 +316,7 @@ select {
 	border-width: 0px;
 	border-radius: 4px;
 	background-color: var(--black-a2);
+
 }
 
 input:focus,
@@ -298,11 +326,11 @@ select:focus {
 
 @keyframes shadowOff {
 	0% {
-		box-shadow: inset 0 0 1px 1px var(--accent-0);
+		box-shadow: inset 0 0 1px 1px var(--color1-1);
 	}
 
 	55% {
-		box-shadow: inset 0 0 1px 1px var(--accent-0);
+		box-shadow: inset 0 0 1px 1px var(--color1-1);
 	}
 
 	to {
@@ -311,11 +339,11 @@ select:focus {
 }
 
 select option {
-	color: var(--accent-1);
+	color: var(--color1-2);
 	background: #1f1f1f;
 
 	&:nth-last-child(-n + 4) {
-		color: var(--accent-0);
+		color: var(--color1-1);
 	}
 }
 
@@ -334,8 +362,9 @@ textarea,
 	border-radius: 4px;
 	background-color: var(--black-a2);
 	overflow-y: auto;
-	caret-color: var(--accent-0);
+	caret-color: var(--color1-1);
 	tab-size: 4;
+	line-height: 140%;
 
 	&:focus {
 		box-shadow: none;
@@ -350,6 +379,32 @@ textarea,
 	z-index: 1;
 }
 
+#tInput {
+	position: absolute;
+	left: auto;
+	right: 30px;
+	font-size: 10px;
+	color: #ffffff20;
+}
+
+#tSelect {
+	position: absolute;
+	left: auto;
+	right: 30px;
+	font-size: 10px;
+	color: #ffffff20;
+}
+
+#tOutput {
+	visibility: hidden;
+	position: absolute;
+	left: auto;
+	right: 30px;
+	display: flex;
+	font-size: 10px;
+	color: #ffffff20;
+}
+
 spacerLine {
 	width: 100%;
 	height: 1px;
@@ -362,7 +417,7 @@ button {
 	max-height: 24px;
 	min-height: 24px;
 	padding: 4px;
-	background-color: var(--accent-a2);
+	background-color: var(--color1-1a);
 	justify-content: center;
 	align-items: center;
 	transition: all 0.2s ease;
@@ -370,19 +425,16 @@ button {
 	&:hover,
 	.button-circle:hover {
 		font-weight: 600;
-		background-color: var(--accent-0);
-	}
-
-	&:focus {
-		animation: var(--shadowOff);
+		background-color: var(--color1-0a);
 	}
 
 	&:active {
-		background-color: var(--accent-1);
+		background-color: var(--color1-2);
 	}
 }
 
 .button-circle {
+	position: relative;
 	max-width: 24px;
 	min-width: 24px;
 	border-radius: 12px;
@@ -393,20 +445,40 @@ button {
 	}
 }
 
+.counter-circle {
+	position: absolute;
+	transform: translate(0%, -60%);
+	min-width: 16px;
+	max-width: 16px;
+	min-height: 16px;
+	max-height: 16px;
+	font-size: 9px;
+	border-radius: 50%;
+	text-align: center;
+	background-color: var(--color1);
+	color: #fff;
+	z-index: 2;
+
+	&#undoCounter {
+		visibility: hidden;
+		left: 39px;
+	}
+}
+
 .textButtons {
-	color: var(--accent-1);
+	color: var(--color1-2);
 	font-size: 12px;
 	font-weight: 400;
 	cursor: pointer;
 
 	&:hover {
-		color: var(--white);
+		color: #fff;
 	}
 }
 
 .buttonWide {
 	gap: 14px;
-	color: var(--accent-b1);
+	color: var(--color1-3a);
 	width: 100%;
 	cursor: pointer;
 	display: flex;
@@ -424,10 +496,10 @@ button {
 	&:hover {
 		color: #fff;
 		padding-left: 12px;
-		background-color: var(--accent-a2);
+		background-color: var(--color1-1a);
 
 		.svgIcons {
-			fill: var(--accent-1);
+			fill: var(--color1-2);
 		}
 	}
 }
@@ -469,6 +541,14 @@ button {
 	align-items: center;
 	justify-content: flex-start;
 	cursor: pointer;
+
+	&:hover > img {
+		rotate: 720deg;
+	}
+
+	&:hover > .logoText {
+		color: #fff;
+	}
 }
 
 .logo {
@@ -477,16 +557,18 @@ button {
 	height: 36px;
 	padding: 4px;
 	object-fit: cover;
-	border-color: var(--accent-1);
+	border-color: var(--color1-2);
 	border-width: 1px;
 	border-radius: 50%;
 	background-color: var(--white-a1);
+	transition: rotate .5s ease-in-out;
 }
 
 .logoText {
-	color: #fff;
+	color: var(--color1-2);
 	font-size: 18px;
 	font-weight: 600;
+	transition: color .2s ease-in-out;
 }
 
 .cRemove {
@@ -518,12 +600,12 @@ button {
 }
 
 .icon2 {
-	fill: var(--accent-1);
+	fill: var(--color1-2);
 }
 
 .svgIcons {
 	display: flex;
-	fill: var(--accent-a1);
+	fill: var(--color1-0a);
 	width: 18px;
 	min-width: 18px;
 	height: 18px;
@@ -532,7 +614,7 @@ button {
 	transition: all 0.5s ease;
 
 	&:hover {
-		fill: var(--accent-1);
+		fill: var(--color1-2);
 	}
 
 	&:active {
@@ -578,19 +660,23 @@ button {
 }
 
 .text01 {
-	color: var(--accent-a1);
+	color: var(--color1-0a);
 	font-size: 11px;
 	font-style: normal;
 	font-weight: 400;
 }
 
+h2 {
+	color: var(--color1-2)
+}
+
 .text02 {
-	color: var(--accent-1);
+	color: var(--color1-2);
 	font-size: 12px;
 }
 
 .cTitles {
-	color: var(--accent-a2);
+	color: var(--color1-1a);
 	font-size: 12px;
 	font-style: normal;
 	font-weight: 300;
@@ -598,7 +684,7 @@ button {
 }
 
 .threeDots {
-	fill: var(--accent-a2);
+	fill: var(--color1-1a);
 	opacity: 0.3;
 	margin-left: auto;
 	margin-right: 0px;
@@ -657,12 +743,13 @@ button {
 }
 
 #midTop {
-	gap: 16px;
+	gap: 6px;
 	width: 100%;
+	min-width: 0%;
 	min-height: 40px;
 	display: flex;
 	align-items: center;
-	padding: 4px 6px 4px 16px;
+	padding: 4px 6px 4px 8px;
 	border-radius: 4px;
 	justify-content: flex-end;
 	background-color: var(--black-a2);
@@ -696,7 +783,6 @@ button {
 	display: flex;
 	flex: 1 1 auto;
 	justify-content: center;
-	/* align-items: flex-end; */
 }
 
 .midFloats {
@@ -711,7 +797,7 @@ button {
 	flex-direction: row;
 	justify-content: space-evenly;
 	align-self: flex-end;
-	background-color: var(--accent-2);
+	background-color: var(--color1-3);
 	box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.2);
 	z-index: 2;
 
@@ -729,7 +815,7 @@ button {
 	height: 28px;
 	width: 28px;
 	border-radius: 16px;
-	background-color: var(--accent-a3);
+	background-color: var(--color1-2a);
 }
 
 #midAlt {
@@ -737,7 +823,7 @@ button {
 	width: 100%;
 	min-height: 0;
 	max-height: 100%;
-	transition: height 0.25s ease-in-out;
+	transition: height 0.3s ease-in-out;
 }
 
 #altField {
@@ -771,7 +857,7 @@ dialog {
 	left: 20%;
 	top: 20%;
 	flex: 1;
-	background: var(--accent-a2);
+	background: var(--color1-1a);
 	padding: 16px;
 	border-radius: 8px;
 	border: 0;
@@ -808,7 +894,7 @@ dialog {
 		left: auto;
 		right: 16px;
 		bottom: 16px;
-		color: var(--accent-a1);
+		color: var(--color1-0a);
 	}
 
 	.dialog_column {
@@ -823,21 +909,30 @@ dialog {
 		margin-bottom: 16px;
 		flex-direction: column;
 		justify-content: center;
-		background-color: var(--accent-a3);
+		background-color: var(--color1-2a);
 	}
 
 	.dialog_row {
 		width: 100%;
 		display: flex;
-		align-items: center;
+		align-items:stretch;
 		gap: 8px;
+		justify-content: space-between;
+
+		&>span {
+			width: 70px;
+		}
 	}
 
 	.dialog_input {
-		width: 340px;
+		width: 100%;
 		height: 26px;
 		padding: 4px;
 		font-size: 12px;
+	}
+
+	#dialogFile {
+		margin-left: -6px;
 	}
 
 	.dialog_btn {
@@ -845,42 +940,48 @@ dialog {
 		font-size: 12px;
 		height: 26px;
 		border-radius: 4px;
+		width: 30px;
 	}
 
 	.x {
-		border: none;
-		background: transparent;
 		position: absolute;
-		top: 6px;
-		right: 6px;
-		width: 26px;
-		height: 26px;
-		border-radius: 13px;
-		padding: 2px;
-		transition: ease filter, transform 0.3s;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		align-items: center;
+		right: 12px;
+		top: 0px;
+		gap: 2px;
+		font-size: 30px;
+		line-height: 100%;
+		height: fit-content;
+		width: 100%;
 		cursor: pointer;
-		filter: saturate(50%);
-		transform: scale(1.2);
+		overflow: visible;
+		cursor: default;
 
-		&:hover {
-			filter: saturate(100%);
-		}
+		h1 {
+			transition: all .05s ease-in-out;
+			text-align: center;
+			cursor: pointer;
 
-		&:focus {
-			box-shadow: none !important;
-			outline: none;
+			&:hover {
+				transform: scale(1.4);
+			}
 		}
 	}
 }
 
 /* Media Queries */
-@media (max-width: 1000px) {
+@media (max-width: 700px) {
 	.buttonWide span,
 	.cCounters,
 	.cTitles,
 	.threeDots,
 	.logoText,
+	#popupWindow,
 	#cCalculator {
+		/* visibility: hidden; */
 		display: none;
 	}
 
@@ -906,9 +1007,7 @@ dialog {
 	}
 
 	#midTop {
-		padding-left: 8px;
 		justify-content: flex-start;
-		gap: 6px;
 	}
 
 	.buttonWide {
@@ -924,11 +1023,11 @@ dialog {
 
 	#cSearchReplace {
 		width: 32px;
+		-webkit-transition: all 0.3s ease-in-out;
+		transition: all 0.3s ease-in-out;
 
 		&:hover {
-			width: 232px;
-			-webkit-transition: all 0.3s ease-in-out;
-			transition: all 0.3s ease-in-out;
+			width: 238px;
 
 			#inputSearch,
 			#inputReplace {

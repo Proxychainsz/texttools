@@ -1,0 +1,3 @@
+Sitemap: https://proxychains.pages.dev/assets/sitemap.xml
+User-agent: *
+Disallow:
