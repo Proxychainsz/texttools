@@ -1,12 +1,9 @@
-const cacheName = 'TextTools_v006';
+const cacheName = 'TextTools_v007';
 const precacheResources = [
 	// '/',
 	'service-worker.js',
 	'index.html',
 	'assets/bg.webp',
-	'assets/bg1.webp',
-	'assets/bg2.webp',
-	'assets/bg3.webp',
 	'assets/caticon.png',
 	'assets/right.css',
 	'assets/style.css',
@@ -53,6 +50,7 @@ self.addEventListener('install', function (e) {
 });
 
 self.addEventListener('fetch', e => {
+	if (!(e.request.url.indexOf('http') === 0)) return;
 	e.respondWith(
 		(async () => {
 			const r = await caches.match(e.request);
