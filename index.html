@@ -469,10 +469,10 @@
 				<div class="dialog_column" style="background: transparent; padding: 0">
 					<!-- <button onclick="window.dialog.close();" class="x" aria-label="close" type="button">❌</button> -->
 					<div class="x">
-						<h1 style="color: var(--color1)" onclick="bgSet('/assets/bg3.webp')">●</h1>
-						<h1 style="color: var(--color2)" onclick="bgSet('/assets/bg2.webp')">●</h1>
-						<h1 style="color: var(--color3)" onclick="bgSet('/assets/bg1.webp')">●</h1>
-						<h1 style="color: var(--color4)" onclick="bgSet('/assets/bg.webp')">●</h1>
+						<h1 style="color: var(--color1)" onclick="bgSet('/assets/bg3.webp'); localStorage.removeItem('random')">●</h1>
+						<h1 style="color: var(--color2)" onclick="bgSet('/assets/bg2.webp'); localStorage.removeItem('random')">●</h1>
+						<h1 style="color: var(--color3)" onclick="bgSet('/assets/bg1.webp'); localStorage.removeItem('random')">●</h1>
+						<h1 style="color: var(--color4)" onclick="bgSet('/assets/bg.webp') ; localStorage.removeItem('random')">●</h1>
 					</div>
 					<h2>Custom Background & Theme</h2>
 					<div class="dialog_column text02">
