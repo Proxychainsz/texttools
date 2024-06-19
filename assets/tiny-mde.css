@@ -3,25 +3,10 @@
 } */
 
 .TMH1,
-.TMSetextH1 {
+.TMSetextH1, .TMH2,
+.TMSetextH2 {
 	line-height: 120%;
 	font-weight: 700;
-	margin-bottom: 8px;
-}
-
-.TMSetextH1 {
-	margin-bottom: 0px;
-}
-
-.TMSetextH1Marker {
-	margin-bottom: 8px;
-}
-
-.TMH2,
-.TMSetextH2 {
-	line-height: 110%;
-	font-weight: 700;
-	margin-bottom: 4px;
 }
 
 .TMMark_TMCode {
@@ -31,13 +16,17 @@
 .TMFencedCodeBacktick,
 .TMFencedCodeTilde,
 .TMCode {
-	padding-left: 4px;
+	font-size: 12px;
 	background-color: #0000003c;
 }
 
 .TMIndentedCode {
-	margin-left: -10px;
-	background-color: #0000001f;
+	font-size: 12px;
+	margin-left: -7px;
+	background-color: #0000003c;
+	/* border-radius: 14px; */
+	width: calc(100% + 14px);
+	color: #ffffffbc;
 }
 
 .TMCodeFenceBacktickOpen,
@@ -52,7 +41,7 @@
 
 .TMInfoString {
 	font-weight: 300;
-	color: #ffffff67;
+	color: var(--color1-1);
 	font-style: italic;
 }
 
@@ -63,15 +52,24 @@
 }
 
 .TMBlockquote {
-	font-style: italic;
-	/* border-left: 2px solid #c0c0c0; */
-	padding-left: 0px;
+	/* font-style: italic; */
+	/* border-left: 1px solid #c0c0c0; */
+	/* padding-left: 0px; */
 	margin-left: 4px;
 }
 
 .TMMark {
+	color: #ffffff30;
+}
+
+.TMMark_TMHR {
+	letter-spacing: 1pt;
+	position: relative;
+	bottom: 6px;
+}
+
+.TMMark_TMLink {
 	color: #a0a0a0;
-	font-size: 120%;
 }
 
 .TMMark_TMH1,
@@ -127,9 +125,10 @@
 	content: '';
 	position: absolute;
 	bottom: 50%;
-	left: 40%;
-	border-bottom: 2px solid #808080;
-	width: 20%;
+	left: 30%;
+	border-bottom: 2px solid #808080B0;
+	border-radius: 20px;
+	width: 40%;
 	z-index: 0;
 }
 

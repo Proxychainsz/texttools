@@ -1,4 +1,4 @@
-const cacheName = 'TextTools_v007';
+const cacheName = 'TextTools_v008';
 const precacheResources = [
 	// '/',
 	'service-worker.js',
@@ -75,7 +75,7 @@ self.addEventListener('activate', e => {
 					if (key === cacheName) {
 						return;
 					}
-					// console.log(`[Service Worker] Updating from ${key} to ${cacheName}`);
+					console.log(`[Service Worker] Updating from ${key} to ${cacheName}`);
 					return caches.delete(key);
 				}),
 			);

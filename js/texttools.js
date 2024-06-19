@@ -165,7 +165,7 @@ function selectCount() {
 }
 
 function selectReset(e) {
-	if (e.button !== 0) return;
+	if (e.button !== 0 || e.shiftKey) return;
 
 	if (window.getSelection) {
 		window.getSelection().removeAllRanges();
@@ -217,7 +217,7 @@ function fromBinary(n) {
 
 function decToBinary(n) {
 	n = n.split(/\s+|\n/);
-	const res = n.map(x => (+x).toString(2));
+	const res = n.map(x => (+x).toString(2).padStart(8, 0));
 	return res.join(' ');
 }
 
@@ -237,6 +237,58 @@ function fromOctal(n) {
 		n = n.toString().match(/.{1,3}/g);
 	}
 	return n.map(x => String.fromCharCode(parseInt(x.padStart(3, '0'), 8))).join('');
+}
+
+function xor(a, b) {
+	if (!b) return;
+	a = a.trim().split(/\s|\n/);
+	b = b.trim().split(/\s|\n/);
+	let res = [];
+
+	if (a.length > b.length) {
+		b = a
+			.map((_, i) => b[i % b.length])
+			.join(' ')
+			.replace(/s+/g, ' ')
+			.split(' ');
+	}
+
+	if (isBinary(a.join(' '))) {
+		a.forEach((_, i) => res.push(((parseInt(a[i], 2) || 0) ^ (parseInt(b[i], 2) || 0)).toString(2).padStart(8, 0)));
+	} else if (isHex(a.join(' '))) {
+		a.forEach((_, i) => res.push(Number((parseInt(a[i], 16) || 0) ^ (parseInt(b[i], 16) || 0)).toString(16)));
+	} else if (isNumSpaces(a.join(' '))) {
+		a.forEach((_, i) => res.push((a[i] || 0) ^ (b[i] || 0)));
+	} else {
+		a = a.join('');
+		b = b.join('').substring(0, a.length);
+		[...a].forEach((_, i) => res.push(((a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0)).toString(16).padStart(2, 0)));
+	}
+
+	return res.join(' ');
+}
+
+function decodeBase64(base64) {
+	const text = atob(base64);
+	const length = text.length;
+	const bytes = new Uint8Array(length);
+	for (let i = 0; i < length; i++) {
+		bytes[i] = text.charCodeAt(i);
+	}
+	return new TextDecoder().decode(bytes);
+}
+
+function parseB64(str) {
+	try {
+		const dec = atob(str);
+		if (/[\x00-\x1F]/g.test(dec)) {
+			return [...dec].map(x => x.charCodeAt(0).toString(16).padStart(2, '0')).join(' ');
+		} else {
+			return decodeBase64(str);
+		}
+	} catch {
+		return;
+	}
 }
 
 function xTrim(str) {
@@ -691,7 +743,7 @@ btnSearchReplace.onclick = e => {
 btnAddLines.onclick = () => {
 	updateHistory();
 	const input = textField.value.split('\n');
-	outField.value = input.map((line, index) => `[${(index + 1).toString().padStart(2, '0')}] ${line}`).join('\n');
+	outField.value = input.map((line, index) => `[${index.toString().padStart(2, '0')}] ${line}`).join('\n');
 	updateInput();
 };
 
@@ -706,6 +758,14 @@ btnFibonacci.onclick = () => {
 -------------------------------------------- */
 function isMorse(txt) {
 	return /^[.\\/s-]/.test(txt);
+}
+
+function isBinary(txt) {
+	return /^[01\s]+$/.test(txt);
+}
+
+function isHex(txt) {
+	return /^[0-9A-Fa-f\s]+$/.test(txt);
 }
 
 function isLetters(txt) {
@@ -730,10 +790,10 @@ function isBacon(txt) {
 
 function removeInvalid(txt) {
 	if (isEmpty(txt)) return;
-	const invalidList = /[\u0000-\u001F\u007F-\u009F]/g;
+	const ctrlChars = /[\u0000-\u001F\u007F-\u009F]/g;
 	const res = txt
 		.toString()
-		.replace(invalidList, '')
+		.replace(ctrlChars, '')
 		.replace(/NaN/g, '')
 		.replace(/^[?\s]*$/, '');
 	return res.trim();
@@ -762,7 +822,7 @@ function regexpEscape(str) {
 function lenTrim(str, max) {
 	max = max || 200000;
 	if (str.length > max) {
-		console.log('Input length (', str.length, ') exceeds (', max, ') truncating to prevent browser from crashing.');
+		console.warn('Input length (', str.length, ') exceeds (', max, ') truncating to prevent browser from crashing.');
 		return str.slice(0, max);
 	}
 	return str;
@@ -776,6 +836,13 @@ function to2dArray(key, size, out) {
 }
 
 function hillParser(key) {
+	if (isLettersAndSpaces(key)) {
+		key = a1z26
+			.enc(key)
+			.split(' ')
+			.map(x => x - 1)
+			.join(' ');
+	}
 	key = key.split(' ');
 	let size;
 
@@ -1024,12 +1091,11 @@ function massEncode() {
 		result.Beaufort = Enigmator.beaufort.enc(txt, key);
 		result.Simple_Substitution = Enigmator.substitution.enc(txt, key);
 		result.Adfgvx = Enigmator.adfgvx.enc(txt, key);
-		result.xor = Enigmator.xor.enc(txt, key);
+		result.XOR_Cipher = Enigmator.xor.enc(txt, key);
 		result.Columnar_Transposition = Boxentriq.ColumnarTransposition.enc(txt, key);
 	}
 
 	if (isNumSpaces(key)) {
-		result.Hill = Enigmator.hill.enc(txt, hillParser(key));
 		const k = key.split(' ');
 		result.Affine = Enigmator.affine.enc(txt, k[0], k[1]);
 	}
@@ -1046,6 +1112,7 @@ function massEncode() {
 		result.Polybius = Cryptography.Polybius.enc(txt);
 	}
 
+	result.Hill = Enigmator.hill.enc(txt, hillParser(key));
 	result.Playfair = Enigmator.playfair.enc(txt, key || '');
 	result.A1z26 = a1z26.enc(txt);
 	result.Atbash = Enigmator.atbash(txt);
@@ -1068,7 +1135,8 @@ function massEncode() {
 			.match(/.{1,3}/g)
 			.join('');
 		result.Binary = toBinary(txt);
-		result.Dec2Bin = decToBinary(txt);
+		result.Decimal_to_Binary = decToBinary(txt);
+		result.xor = xor(txt, key);
 		result.Binary_Flip = binFlip(txt.replace(/[^0-1 ]/g, '').replace(/\s\s+/g, ' '));
 		result.Baudot_v1 = Boxentriq.baudot.enc(txt, 'v1');
 		result.Baudot_v2 = Boxentriq.baudot.enc(txt, 'v2');
@@ -1101,7 +1169,7 @@ function massEncode() {
 	for (const i in result) {
 		result[i] = removeInvalid(result[i]);
 		if (!isEmpty(result[i]) && result[i] != txt)
-			element += `<resId>${i.replace('_', ' ')}</resId><resDiv><textarea id='${i}Res' class='resTxtArea' ondblclick='copyResults(this.id)' readonly>${result[i]}</textarea></resDiv>`;
+			element += `<resId>${i.replaceAll('_', ' ')}</resId><resDiv><textarea id='${i}Res' class='resTxtArea' ondblclick='copyResults(this.id)' readonly>${result[i]}</textarea></resDiv>`;
 	}
 	$('resContainer').insertAdjacentHTML('beforeend', element);
 }
@@ -1121,12 +1189,12 @@ function massDecode() {
 		result.Beaufort = Enigmator.beaufort.enc(txt, key);
 		result.Simple_Substitution = Enigmator.substitution.dec(txt, key);
 		result.Adfgvx = Enigmator.adfgvx.dec(txt, key);
-		result.xor = Enigmator.xor.dec(txt, key);
+		result.XOR_Cipher = Enigmator.xor.dec(txt, key);
 		result.Columnar_Transposition = Boxentriq.ColumnarTransposition.dec(txt, key);
+		result.Hill = Enigmator.hill.dec(txt, hillParser(key));
 	}
 
 	if (isNumSpaces(key) && key.length > 2) {
-		result.Hill = Enigmator.hill.dec(txt, hillParser(key));
 		const k = key.split(' ');
 		result.Affine = Enigmator.affine.dec(txt, k[0], k[1]);
 	}
@@ -1164,14 +1232,15 @@ function massDecode() {
 
 	if ($('encodings').checked) {
 		result.Ascii = String.fromCharCode.apply(this, txt.split(' '));
-		result.Base64 = Enigmator.base64.dec(txt);
+		result.Base64 = parseB64(txt);
 		result.Base32 = Enigmator.base32.dec(txt);
 		result.Base26_0 = base26.dec(txt, 0);
 		result.Base26_1 = base26.dec(txt, 1);
 		result.Base16 = Enigmator.base16.dec(txt);
 		result.Octal = fromOctal(txt);
 		result.Binary = fromBinary(txt);
-		result.Bin2Dec = binToDecimal(txt).replace(/\s\s+/g, '');
+		result.Binary_to_Decimal = binToDecimal(txt).replace(/\s\s+/g, '');
+		result.xor = xor(txt, key);
 		result.Binary_Flip = binFlip(txt.replace(/[^0-1 ]/g, '').replace(/\s\s+/g, ' '));
 		result.Baudot_v1 = Boxentriq.baudot.dec(txt, 'v1');
 		result.Baudot_v2 = Boxentriq.baudot.dec(txt, 'v2');
@@ -1204,7 +1273,7 @@ function massDecode() {
 	for (const i in result) {
 		result[i] = removeInvalid(result[i]);
 		if (!isEmpty(result[i]) && result[i] != txt)
-			element += `<resId>${i.replace('_', ' ')}</resId><resDiv><textarea id='${i}Res' class='resTxtArea' ondblclick='copyResults(this.id)' readonly>${result[i]}</textarea></resDiv>`;
+			element += `<resId>${i.replaceAll('_', ' ')}</resId><resDiv><textarea id='${i}Res' class='resTxtArea' ondblclick='copyResults(this.id)' readonly>${result[i]}</textarea></resDiv>`;
 	}
 	$('resContainer').insertAdjacentHTML('beforeend', element);
 }

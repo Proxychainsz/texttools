@@ -133,7 +133,11 @@ var Enigmator = {
 	-----------------------------------------------*/
 	uuencoding: {
 		enc(text) {
-			return convert_uuencode(text);
+			try {
+				return convert_uuencode(text);
+			} catch {
+				return;
+			}
 		},
 
 		//Decoding is not working perfectly yet
@@ -577,7 +581,7 @@ var Enigmator = {
 			alphabet = alphabet || 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 			a = Number(a);
 			if (a % 2 != 1) {
-				return 'Input must be coprime with 26.';
+				return; //'Input must be coprime with 26.';
 			}
 			b = Number(b);
 			alphabet = alphabet.toUpperCase();
@@ -602,7 +606,7 @@ var Enigmator = {
 			alphabet = alphabet || 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 			a = Number(a);
 			if (a % 2 != 1) {
-				return 'Input must be coprime with 26.';
+				return; //'Input must be coprime with 26.';
 			}
 
 			b = Number(b);

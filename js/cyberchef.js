@@ -57,12 +57,12 @@ var CyberChef = {
 		------------------------------------- */
 		enc(input, radix) {
 			input = input.trim().split(' ');
-			return input.map(x => parseInt(x, radix)).join(' ');
+			return input.map(x => Math.abs(x).toString(radix)).join(' ');
 		},
 
 		dec(input, radix) {
 			input = input.trim().split(' ');
-			return input.map(x => Math.abs(x).toString(radix)).join(' ');
+			return input.map(x => parseInt(x, radix)).join(' ');
 		},
 	},
 

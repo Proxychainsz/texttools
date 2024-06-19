@@ -28,7 +28,7 @@
 
 				if (rand == 'true') {
 					window.onload = function () {
-						console.log('> Random userBG enabled, loading photo of the day from bing.');
+						console.log('> Random background enabled.');
 						bgSet(dailyBG);
 					};
 				} else {
@@ -38,7 +38,7 @@
 					e.src = usrbg;
 				}
 
-				if (window.innerWidth < 1200) {
+				if (window.innerWidth < 1000) {
 					toggleSize();
 				}
 
@@ -369,7 +369,7 @@
 									</button>
 								</div>
 							</div>
-							<p id="tSelect">Hello!</p>
+							<p id="tSelect">·</p>
 						</div>
 						<div id="midAlt" class="altFadeOut">
 							<textarea id="altField" placeholder="[|>] Output area" style="padding-bottom: 40px"></textarea>
@@ -498,8 +498,10 @@
 					</div>
 					<span style="color: var(--color1-0a)">You can find the <a href="https://old.proxychains.pages.dev/">old UI here</a>.</span>
 					<span class="info">
-						Made with <a style="color: var(--color3); font-size: 14px">♥</a> by
-						<a style="cursor: crosshair" href="https://github.com/Proxychainsz/texttools/">Proxychains</a>
+						Made with
+						<span style="color: var(--color3); font-size: 15px">♥</span>
+						by
+						<a href="https://github.com/Proxychainsz/texttools/">Proxychains</a>
 					</span>
 				</div>
 			</dialog>
