@@ -87,7 +87,7 @@ function updateInput() {
 	tinyEditor.setContent(textField.value);
 }
 
-function undoButton(e) {
+function undoButton() {
 	if (undoHistory.undo(true) !== undefined && undoHistory.currentIndex > 1) {
 		let sel = tinyEditor.getSelection();
 
@@ -143,7 +143,7 @@ function KeyPressDown(e) {
 	if (e.ctrlKey) {
 		if (e.keyCode == 89) redoButton(); // Y
 		if (e.keyCode == 90) undoButton(); // Z
-		if (e.keyCode == 65 || e.keyCode == 97) selectCount(); // a A
+		if (e.keyCode == 65) setTimeout(() => selectCount(), 1);
 	}
 
 	if (e.target.classList[0] == 'TinyMDE' && e.key == 'Tab') {
@@ -154,9 +154,6 @@ function KeyPressDown(e) {
 
 tinyEditor.addEventListener('selection', e => {
 	let st = `${e.focus ? e.focus.row : '–'} : ${e.focus ? e.focus.col : '–'}`;
-	for (let command in e.commandState) {
-		if (e.commandState[command]) st = command.concat(' ', st);
-	}
 	$('tSelect').innerHTML = st;
 });
 
@@ -241,28 +238,26 @@ function fromOctal(n) {
 
 function xor(a, b) {
 	if (!b) return;
-	a = a.trim().split(/\s|\n/);
-	b = b.trim().split(/\s|\n/);
-	let res = [];
-
-	if (a.length > b.length) {
-		b = a
-			.map((_, i) => b[i % b.length])
-			.join(' ')
-			.replace(/s+/g, ' ')
-			.split(' ');
-	}
+	var res = [];
+	b = (b + a.substring(b.length)).split(' ');
+	a = a.split(/[\s\n]/);
 
 	if (isBinary(a.join(' '))) {
-		a.forEach((_, i) => res.push(((parseInt(a[i], 2) || 0) ^ (parseInt(b[i], 2) || 0)).toString(2).padStart(8, 0)));
+		a.forEach((_, i) => res.push((parseInt(a[i], 2) ^ parseInt(b[i], 2)).toString(2).padStart(8, 0)));
 	} else if (isHex(a.join(' '))) {
-		a.forEach((_, i) => res.push(Number((parseInt(a[i], 16) || 0) ^ (parseInt(b[i], 16) || 0)).toString(16)));
+		a.forEach((_, i) =>
+			res.push(
+				Number(parseInt(a[i], 16) ^ parseInt(b[i], 16))
+					.toString(16)
+					.padStart(2, 0),
+			),
+		);
 	} else if (isNumSpaces(a.join(' '))) {
-		a.forEach((_, i) => res.push((a[i] || 0) ^ (b[i] || 0)));
+		a.forEach((_, i) => res.push(a[i] ^ b[i]));
 	} else {
 		a = a.join('');
-		b = b.join('').substring(0, a.length);
-		[...a].forEach((_, i) => res.push(((a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0)).toString(16).padStart(2, 0)));
+		b = b.join('');
+		[...a].forEach((_, i) => res.push((a.charCodeAt(i) ^ b.charCodeAt(i)).toString(16).padStart(2, 0)));
 	}
 
 	return res.join(' ');
@@ -356,6 +351,7 @@ const a1z26 = {
 	},
 };
 
+// https://github.com/patrik-csak/BB26
 const base26 = {
 	enc(string, v) {
 		let res = [];
@@ -367,7 +363,6 @@ const base26 = {
 
 				let number = 0;
 				for (let i = 0; i < string.length; i++) {
-					if (!/[A-Z]/.test(string)) console.log(string);
 					const char = string[string.length - i - 1];
 					number += 26 ** i * charToDecimal(char, v);
 				}
@@ -476,7 +471,7 @@ btnTrim.onclick = e => {
 btnSplit.onclick = () => {
 	updateHistory();
 	var input = xTrim(textField.value);
-	const sValue = prompt('Split into n segments', '8');
+	const sValue = prompt('Split into segments of x length', '8');
 	if (!sValue || !input) return;
 	const res = [];
 
@@ -507,6 +502,26 @@ btnSort.onclick = () => {
 		res = res.sort().join(' ');
 	}
 	outField.value = res;
+	updateInput();
+};
+
+padStart.onclick = () => {
+	updateHistory();
+	const input = textField.value.trim().split(' ');
+	const length = prompt('Length', '8');
+	const string = prompt('Fill String', '0');
+
+	outField.value = input.map(x => x.padStart(length, string)).join(' ');
+	updateInput();
+};
+
+padEnd.onclick = () => {
+	updateHistory();
+	const input = textField.value.trim().split(' ');
+	const length = prompt('Length', '8');
+	const string = prompt('Fill String', '0');
+
+	outField.value = input.map(x => x.padEnd(length, string)).join(' ');
 	updateInput();
 };
 
