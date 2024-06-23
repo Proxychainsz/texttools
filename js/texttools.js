@@ -96,11 +96,8 @@ function undoButton() {
 			let b = textField.value.length;
 			let c = undoHistory.undo(true).length;
 
-			if (b >= c) {
-				sel['col'] = a - (b - c);
-			} else {
-				sel['col'] = a + (c - b);
-			}
+			if (b >= c) sel['col'] = a - (b - c);
+			else sel['col'] = a + (c - b);
 		}
 		textField.value = undoHistory.undo();
 		updateInput();
@@ -124,11 +121,8 @@ function redoButton() {
 		if (sel !== null) {
 			let a = sel['col'];
 
-			if (c >= b) {
-				sel['col'] = a + (c - b);
-			} else {
-				sel['col'] = a + (b - c);
-			}
+			if (c >= b) sel['col'] = a + (c - b);
+			else sel['col'] = a + (b - c);
 
 			setTimeout(() => {
 				TinyMde[0].focus();
@@ -143,7 +137,7 @@ function KeyPressDown(e) {
 	if (e.ctrlKey) {
 		if (e.keyCode == 89) redoButton(); // Y
 		if (e.keyCode == 90) undoButton(); // Z
-		if (e.keyCode == 65) setTimeout(() => selectCount(), 1);
+		if (e.keyCode == 65) setTimeout(() => selectCount(), 1); // a
 	}
 
 	if (e.target.classList[0] == 'TinyMDE' && e.key == 'Tab') {
@@ -238,25 +232,32 @@ function fromOctal(n) {
 
 function xor(a, b) {
 	if (!b) return;
-	var res = [];
+	const res = [];
+	const bin = isBinary(a);
+	const hex = isHex(a);
+	const dec = isNumSpaces(a);
 	b = (b + a.substring(b.length)).split(' ');
 	a = a.split(/[\s\n]/);
 
-	if (isBinary(a.join(' '))) {
+	if (bin) {
+		res.push('Bin:');
 		a.forEach((_, i) => res.push((parseInt(a[i], 2) ^ parseInt(b[i], 2)).toString(2).padStart(8, 0)));
-	} else if (isHex(a.join(' '))) {
+	} else if (hex) {
+		res.push('Hex:');
 		a.forEach((_, i) =>
 			res.push(
 				Number(parseInt(a[i], 16) ^ parseInt(b[i], 16))
 					.toString(16)
-					.padStart(2, 0),
-			),
+					.padStart(2, 0)
+			)
 		);
-	} else if (isNumSpaces(a.join(' '))) {
+	} else if (dec) {
+		res.push('Dec:');
 		a.forEach((_, i) => res.push(a[i] ^ b[i]));
 	} else {
 		a = a.join('');
 		b = b.join('');
+		res.push('XOR:');
 		[...a].forEach((_, i) => res.push((a.charCodeAt(i) ^ b.charCodeAt(i)).toString(16).padStart(2, 0)));
 	}
 
@@ -274,15 +275,13 @@ function decodeBase64(base64) {
 }
 
 function parseB64(str) {
-	try {
-		const dec = atob(str);
-		if (/[\x00-\x1F]/g.test(dec)) {
-			return [...dec].map(x => x.charCodeAt(0).toString(16).padStart(2, '0')).join(' ');
-		} else {
-			return decodeBase64(str);
-		}
-	} catch {
-		return;
+	if (/[^a-z0-9+/=\s]/gi.test(str)) return;
+	const dec = atob(str);
+	if (/[\x00-\x1F]/g.test(dec)) {
+		// if theres control characters return Uint8Array as hex
+		return [...dec].map(x => x.charCodeAt(0).toString(16).padStart(2, '0')).join(' ');
+	} else {
+		return decodeBase64(str);
 	}
 }
 
@@ -508,20 +507,24 @@ btnSort.onclick = () => {
 padStart.onclick = () => {
 	updateHistory();
 	const input = textField.value.trim().split(' ');
-	const length = prompt('Length', '8');
-	const string = prompt('Fill String', '0');
+	const len = prompt('Length', '2');
+	if (len == null) return;
+	const str = prompt('Fill String', '0');
+	if (str == null) return;
 
-	outField.value = input.map(x => x.padStart(length, string)).join(' ');
+	outField.value = input.map(x => x.padStart(len, str)).join(' ');
 	updateInput();
 };
 
 padEnd.onclick = () => {
 	updateHistory();
 	const input = textField.value.trim().split(' ');
-	const length = prompt('Length', '8');
-	const string = prompt('Fill String', '0');
+	const len = prompt('Length', '2');
+	if (len == null) return;
+	const str = prompt('Fill String', '0');
+	if (str == null) return;
 
-	outField.value = input.map(x => x.padEnd(length, string)).join(' ');
+	outField.value = input.map(x => x.padEnd(len, str)).join(' ');
 	updateInput();
 };
 
@@ -692,9 +695,9 @@ btnCalculate.onclick = () => {
 
 	switch (op) {
 		case 'reduce': {
-			const x = input.replace(/[^\d\s]/g, ' ').split(/\s|\n/);
+			const x = input.match(/(\b[\d.]+\b)/g);
 			outField.value = x.map(Number).reduce((a, b) => +a + +b, 0);
-			return;
+			return updateInput();
 		}
 	}
 
@@ -709,7 +712,7 @@ btnCalculate.onclick = () => {
 					}
 					return n;
 				})
-				.join(' '),
+				.join(' ')
 		)
 		.join('\n');
 
