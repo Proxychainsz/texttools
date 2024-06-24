@@ -17,21 +17,21 @@
 	--color1-3: hsl(var(--h), 20%, 25%);
 
 	--color1-0a: hsla(var(--h), 30%, 50%, 1);
-	--color1-1a: hsla(var(--h), 30%, 50%, .5);
-	--color1-2a: hsla(var(--h), 30%, 50%, .35);
-	--color1-3a: hsla(var(--h), 30%, 80%, .9);
+	--color1-1a: hsla(var(--h), 30%, 50%, 0.5);
+	--color1-2a: hsla(var(--h), 30%, 50%, 0.35);
+	--color1-3a: hsla(var(--h), 30%, 80%, 0.9);
 	--color1-4a: hsla(var(--h), 100%, 70%, 1);
-	--color1-5a: hsla(var(--h), 90%, 70%, .9);
+	--color1-5a: hsla(var(--h), 90%, 70%, 0.9);
 
 	--color3-0: hsla(var(--h3), 90%, 60%, 1);
-	--color3-1: hsla(var(--h3), 90%, 60%, .25);
+	--color3-1: hsla(var(--h3), 90%, 60%, 0.25);
 
-	--black-a1: hsla(0, 0%, 0%, .6);
-	--black-a2: hsla(0, 0%, 0%, .15);
-	--black-a3: hsla(0, 0%, 0%, .35);
-	--white-a1: hsla(0, 0%, 50%, .2);
-	--white-a2: hsla(0, 1%, 70%, .6);
-	--white-a3: hsla(0, 8%, 85%, .8);
+	--black-a1: hsla(0, 0%, 0%, 0.6);
+	--black-a2: hsla(0, 0%, 0%, 0.15);
+	--black-a3: hsla(0, 0%, 0%, 0.35);
+	--white-a1: hsla(0, 0%, 50%, 0.2);
+	--white-a2: hsla(0, 1%, 70%, 0.6);
+	--white-a3: hsla(0, 8%, 85%, 0.8);
 
 	--shadowOff: shadowOff 10s ease forwards;
 }
@@ -187,6 +187,14 @@ textarea::-webkit-scrollbar,
 	opacity: 1;
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+	transition: background-color 5000s ease-in-out 0s;
+	box-shadow: inset 0 0 20px 20px #23232329;
+}
+
 input[type='search']::-webkit-search-cancel-button {
 	-webkit-appearance: none;
 	cursor: pointer;
@@ -287,7 +295,7 @@ toggleSize {
 	&::after {
 		position: relative;
 		display: block;
-		content: "T O G G L E";
+		content: 'T O G G L E';
 		color: rgba(189, 189, 189, 0.092);
 		font-size: 9px;
 		writing-mode: vertical-lr;
@@ -303,7 +311,6 @@ toggleSize {
 	}
 }
 
-
 input,
 select {
 	color: var(--color1-2);
@@ -316,7 +323,6 @@ select {
 	border-width: 0px;
 	border-radius: 4px;
 	background-color: var(--black-a2);
-
 }
 
 input:focus,
@@ -430,7 +436,7 @@ button {
 	}
 
 	&:active {
-		background-color: var(--color1-2);
+		background-color: var(--color1);
 	}
 }
 
@@ -543,8 +549,8 @@ button {
 	justify-content: flex-start;
 	cursor: pointer;
 
-	&:hover > img {
-		rotate: 720deg;
+	&:hover > svg {
+		transform: rotate(720deg);
 	}
 
 	&:hover > .logoText {
@@ -562,14 +568,16 @@ button {
 	border-width: 1px;
 	border-radius: 50%;
 	background-color: var(--white-a1);
-	transition: rotate .5s ease-in-out;
+	transition: transform 0.5s ease-in-out;
+	fill: #fff;
+	fill-rule: evenodd;
 }
 
 .logoText {
 	color: var(--color1-2);
 	font-size: 18px;
 	font-weight: 600;
-	transition: color .2s ease-in-out;
+	transition: color 0.2s ease-in-out;
 }
 
 .cRemove {
@@ -617,11 +625,6 @@ button {
 	&:hover {
 		fill: var(--color1-2);
 	}
-
-	&:active {
-		transition: none;
-		transform: scale(1.4);
-	}
 }
 
 .cCounters {
@@ -668,7 +671,7 @@ button {
 }
 
 h2 {
-	color: var(--color1-2)
+	color: var(--color1-2);
 }
 
 .text02 {
@@ -882,7 +885,7 @@ dialog {
 		height: 441%;
 		left: 50%;
 		top: 50%;
-		background: url(/assets/caticon.png) 0 0 repeat;
+		background: url(/assets/caticon.svg) 0 0 repeat;
 		background-size: 64px;
 		transform: translate(-50%, -50%) rotate(-30deg);
 		z-index: -1;
@@ -917,11 +920,11 @@ dialog {
 	.dialog_row {
 		width: 100%;
 		display: flex;
-		align-items:stretch;
+		align-items: stretch;
 		gap: 8px;
 		justify-content: space-between;
 
-		&>span {
+		& > span {
 			width: 70px;
 		}
 	}
@@ -963,7 +966,7 @@ dialog {
 		cursor: default;
 
 		h1 {
-			transition: all .05s ease-in-out;
+			transition: all 0.05s ease-in-out;
 			text-align: center;
 			cursor: pointer;
 
@@ -1066,24 +1069,20 @@ dialog {
 
 @-webkit-keyframes loadIn {
 	from {
-		opacity: 0;
 		filter: saturate(0%);
 	}
 
 	to {
-		opacity: 1;
 		filter: saturate(100%);
 	}
 }
 
 @keyframes loadIn {
 	from {
-		opacity: 0;
 		filter: saturate(0%);
 	}
 
 	to {
-		opacity: 1;
 		filter: saturate(100%);
 	}
 }

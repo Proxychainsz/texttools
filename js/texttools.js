@@ -2,18 +2,17 @@ const tinyEditor = new TinyMDE.Editor({ textarea: 'textField' });
 const tinyOutput = new TinyMDE.Editor({ textarea: 'altField', content: '[|>] Output area' });
 const TinyMde = document.getElementsByClassName('TinyMDE');
 const undoHistory = new window.UndoRedojs(5);
-const textField = $('textField');
-const altField = $('altField');
-const cipherField = $('cipherField');
-const keyField = $('keyField');
-
-const charCounter = $('charCount');
-const noWSpaceCounter = $('noWSpaceCount');
-const letterCounter = $('letterCount');
-const digitCounter = $('digitCount');
-const selectCounter = $('selectCount');
-const groupCounter = $('groupCount');
-const undoCounter = $('undoCounter');
+const textField = $('textField'),
+	altField = $('altField'),
+	cipherField = $('cipherField'),
+	keyField = $('keyField'),
+	charCounter = $('charCount'),
+	noWSpaceCounter = $('noWSpaceCount'),
+	letterCounter = $('letterCount'),
+	digitCounter = $('digitCount'),
+	selectCounter = $('selectCount'),
+	groupCounter = $('groupCount'),
+	undoCounter = $('undoCounter');
 
 tinyEditor.addEventListener('change', e => {
 	charCounter.innerHTML = (textField.value.match(/(.|\n|\r)/g) || []).length;
@@ -44,9 +43,9 @@ tinyEditor.addEventListener('change', e => {
 let outField = textField;
 let tOutput = false;
 function altToggle() {
-	const el = $('midAlt');
-	const af = $('altFloats');
-	const to = $('tOutput');
+	const el = $('midAlt'),
+		af = $('altFloats'),
+		to = $('tOutput');
 	if (tOutput) {
 		af.style.width = '28px';
 		el.classList.add('altFadeOut');
@@ -140,6 +139,13 @@ function KeyPressDown(e) {
 		if (e.keyCode == 65) setTimeout(() => selectCount(), 1); // a
 	}
 
+	if (e.key === 'Enter' && e.target.id == 'keyField') {
+		massDecode();
+		$('massDecode').animate([{ backgroundColor: 'var(--color1)' }, { backgroundColor: 'var(--color1-1a)' }], {
+			duration: 900,
+		});
+	}
+
 	if (e.target.classList[0] == 'TinyMDE' && e.key == 'Tab') {
 		e.preventDefault();
 		document.execCommand('insertText', false, '\t');
@@ -208,14 +214,12 @@ function fromBinary(n) {
 
 function decToBinary(n) {
 	n = n.split(/\s+|\n/);
-	const res = n.map(x => (+x).toString(2).padStart(8, 0));
-	return res.join(' ');
+	return n.map(x => (+x).toString(2).padStart(8, 0)).join(' ');
 }
 
 function binToDecimal(n) {
 	n = n.split(/\s+|\n/);
-	const res = n.map(x => parseInt(x, 2));
-	return res.join(' ');
+	return n.map(x => parseInt(x, 2)).join(' ');
 }
 
 function binFlip(txt) {
@@ -275,13 +279,17 @@ function decodeBase64(base64) {
 }
 
 function parseB64(str) {
-	if (/[^a-z0-9+/=\s]/gi.test(str)) return;
-	const dec = atob(str);
-	if (/[\x00-\x1F]/g.test(dec)) {
-		// if theres control characters return Uint8Array as hex
-		return [...dec].map(x => x.charCodeAt(0).toString(16).padStart(2, '0')).join(' ');
-	} else {
-		return decodeBase64(str);
+	try {
+		if (/[^a-z0-9+/=\s]/gi.test(str)) return;
+		const dec = atob(str);
+		if (/[\x00-\x1F]/g.test(dec)) {
+			// if theres control characters return Uint8Array as hex
+			return [...dec].map(x => x.charCodeAt(0).toString(16).padStart(2, '0')).join(' ');
+		} else {
+			return decodeBase64(str);
+		}
+	} catch {
+		return;
 	}
 }
 
@@ -511,7 +519,6 @@ padStart.onclick = () => {
 	if (len == null) return;
 	const str = prompt('Fill String', '0');
 	if (str == null) return;
-
 	outField.value = input.map(x => x.padStart(len, str)).join(' ');
 	updateInput();
 };
@@ -722,11 +729,8 @@ btnCalculate.onclick = () => {
 
 calcOP.onchange = () => {
 	var el = $('calcValue');
-	if (calcOP.selectedIndex >= 7 && calcOP.selectedIndex <= 10) {
-		el.hidden = true;
-	} else {
-		el.hidden = false;
-	}
+	if (calcOP.selectedIndex >= 7) el.hidden = true;
+	else el.hidden = false;
 };
 
 btnBinaryFlip.onclick = () => {
@@ -1026,6 +1030,9 @@ function complementary(h, s) {
 function processImage(base64) {
 	return new Promise((resolve, reject) => {
 		document.documentElement.style.cursor = 'wait';
+		setTimeout(() => {
+			document.documentElement.style.cursor = 'default';
+		}, 5000);
 		const maxFileSize = 333666;
 		const img = new Image();
 		img.crossOrigin = `Anonymous`;

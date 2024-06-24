@@ -1,10 +1,14 @@
-const cacheName = 'TextTools_v009';
+const cacheName = 'TextTools_v010';
 const precacheResources = [
 	// '/',
 	'service-worker.js',
 	'index.html',
-	'assets/bg.webp',
-	'assets/caticon.png',
+	'assets/bg0.webp',
+	'assets/bg1.webp',
+	'assets/bg2.webp',
+	'assets/bg3.webp',
+	'assets/caticon.svg',
+	'assets/favicon.ico',
 	'assets/right.css',
 	'assets/style.css',
 	'assets/tiny-mde.css',
@@ -14,10 +18,6 @@ const precacheResources = [
 	'assets/fonts/inter-v12-latin-300.woff2',
 	'assets/fonts/inter-v12-latin-600.woff2',
 	'assets/fonts/inter-v12-latin-regular.woff2',
-	'assets/manifest/icon-192x192.png',
-	'assets/manifest/icon-256x256.png',
-	'assets/manifest/icon-384x384.png',
-	'assets/manifest/icon-512x512.png',
 	'js/boxentriq.js',
 	'js/cryptography.js',
 	'js/cyberchef.js',
@@ -45,7 +45,7 @@ self.addEventListener('install', function (e) {
 			})
 			.then(function (e) {
 				return self.skipWaiting();
-			}),
+			})
 	);
 });
 
@@ -63,7 +63,7 @@ self.addEventListener('fetch', e => {
 			// console.log(`[Service Worker] Caching new resource: ${e.request.url}`);
 			cache.put(e.request, response.clone());
 			return response;
-		})(),
+		})()
 	);
 });
 
@@ -77,8 +77,8 @@ self.addEventListener('activate', e => {
 					}
 					console.log(`[Service Worker] Updating from ${key} to ${cacheName}`);
 					return caches.delete(key);
-				}),
+				})
 			);
-		}),
+		})
 	);
 });

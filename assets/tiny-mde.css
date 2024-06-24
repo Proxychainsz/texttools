@@ -3,7 +3,8 @@
 } */
 
 .TMH1,
-.TMSetextH1, .TMH2,
+.TMSetextH1,
+.TMH2,
 .TMSetextH2 {
 	line-height: 120%;
 	font-weight: 700;
@@ -126,7 +127,7 @@
 	position: absolute;
 	bottom: 50%;
 	left: 30%;
-	border-bottom: 2px solid #808080B0;
+	border-bottom: 2px solid #808080b0;
 	border-radius: 20px;
 	width: 40%;
 	z-index: 0;
@@ -144,7 +145,7 @@
 
 .TMNumbers {
 	color: var(--color1-5a);
-	text-shadow: 0 0 2px rgb(0,0,0);
+	text-shadow: 0 0 2px rgb(0, 0, 0);
 	font-weight: 600;
 }
 
