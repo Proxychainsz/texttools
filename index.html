@@ -15,42 +15,7 @@
 		<link rel="icon" href="assets/favicon.ico" sizes="48x48" />
 		<link rel="manifest" href="/manifest.webmanifest" crossorigin="use-credentials" />
 		<link rel="stylesheet" href="assets/style.css" />
-		<link rel="stylesheet" href="assets/right.css" />
-		<link rel="stylesheet" href="assets/tiny-mde.css" />
 		<script type="module" src="/js/sw.js"></script>
-		<script>
-			document.addEventListener('DOMContentLoaded', event => {
-				// load user bg & colors
-				const e = document.getElementById('bgElement');
-				const rand = localStorage.getItem('random') || '';
-				const usrbg = localStorage.getItem('usrbg') || 'assets/bg3.webp';
-				const h = localStorage.getItem('h') || '355';
-				const s = localStorage.getItem('s') || '12%';
-
-				if (rand == 'true') {
-					window.onload = function () {
-						console.log('> Random background enabled.');
-						bgSet(dailyBG);
-					};
-				} else {
-					document.documentElement.style.setProperty('--h', h);
-					document.documentElement.style.setProperty('--s', s);
-					e.crossOrigin = `Anonymous`;
-					e.src = usrbg;
-				}
-
-				if (window.innerWidth < 1000) {
-					toggleSize();
-				}
-
-				// load saved text
-				const savedText =
-					localStorage.getItem('text') ||
-					'[01] <Hello> world! `testing`\n[!=] 01000100 01100101 01100011 01101111 01100100 01100101 01100100\n[02] Lorem ipsum dolor sit amet, [consectetur] adipiscing elit.';
-				textField.value = lenTrim(savedText);
-				updateInput();
-			});
-		</script>
 	</head>
 	<body onmouseup="selectCount()" onmousedown="selectReset(event)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
 		<img id="bgElement" src="assets/bg3.webp" style="animation: loadIn 1s, fadeIn 1s; -webkit-animation: loadIn 1s, fadeIn 1s" alt="background" />
@@ -394,7 +359,6 @@
 							<div id="tOutput">Output</div>
 						</div>
 					</div>
-					<!-- cMiddle -->
 				</div>
 				<toggleSize onclick="toggleSize()" title="Click to toggle size or drag to resize manually"></toggleSize>
 				<div id="separator"></div>
@@ -485,7 +449,6 @@
 			</div>
 			<dialog id="dialog">
 				<div class="dialog_column" style="background: transparent; padding: 0">
-					<!-- <button onclick="window.dialog.close();" class="x" aria-label="close" type="button">❌</button> -->
 					<div class="x">
 						<h1 style="color: var(--color1)" onclick="bgSet('/assets/bg0.webp'); localStorage.removeItem('random')">●</h1>
 						<h1 style="color: var(--color2)" onclick="bgSet('/assets/bg1.webp'); localStorage.removeItem('random')">●</h1>
@@ -524,6 +487,34 @@
 				</div>
 			</dialog>
 		</div>
+		<script>
+			const e = document.getElementById('bgElement');
+			const rand = localStorage.getItem('random') || '';
+			const usrbg = localStorage.getItem('usrbg') || 'assets/bg3.webp';
+			const h = localStorage.getItem('h') || '355';
+			const s = localStorage.getItem('s') || '12%';
+
+			document.documentElement.style.setProperty('--h', h);
+			document.documentElement.style.setProperty('--s', s);
+			e.crossOrigin = `Anonymous`;
+			e.src = usrbg;
+
+			document.addEventListener('DOMContentLoaded', event => {
+				if (rand == 'true') bgSet(dailyBG);
+
+				if (window.innerWidth < 1000) {
+					toggleSize();
+				}
+
+				const savedText =
+					localStorage.getItem('text') ||
+					'[01] <Hello> world! `testing`\n[!=] 01000100 01100101 01100011 01101111 01100100 01100101 01100100\n[02] Lorem ipsum dolor sit amet, [consectetur] adipiscing elit.';
+				textField.value = lenTrim(savedText);
+				updateInput();
+			});
+		</script>
+		<link rel="preload" rel="stylesheet" href="assets/tiny-mde.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+		<link rel="preload" rel="stylesheet" href="assets/right.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
 		<script defer src="js/lib/color-thief.min.js"></script>
 		<script defer src="js/lib/tiny-mde.tiny.js"></script>
 		<script defer src="js/lib/UndoRedo.min.js"></script>

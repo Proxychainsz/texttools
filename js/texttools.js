@@ -648,7 +648,7 @@ btnToUppercase.onclick = () => {
 btnToBinary.onclick = () => {
 	updateHistory();
 	const input = textField.value.trim();
-	if (input.length > 300000) return;
+	if (input.length > 400000) return;
 	outField.value = toBinary(input);
 	updateInput();
 };
@@ -842,7 +842,7 @@ function regexpEscape(str) {
 }
 
 function lenTrim(str, max) {
-	max = max || 200000;
+	max = max || 400000;
 	if (str.length > max) {
 		console.warn('Input length (', str.length, ') exceeds (', max, ') truncating to prevent browser from crashing.');
 		return str.slice(0, max);
