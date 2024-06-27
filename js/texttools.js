@@ -15,29 +15,24 @@ const textField = $('textField'),
 	undoCounter = $('undoCounter');
 
 tinyEditor.addEventListener('change', e => {
-	charCounter.innerHTML = (textField.value.match(/(.|\n|\r)/g) || []).length;
-	noWSpaceCounter.innerHTML = (textField.value.match(/\S/g) || []).length;
-	letterCounter.innerHTML = (textField.value.match(/[a-z]/gi) || []).length;
-	digitCounter.innerHTML = (textField.value.match(/\d/g) || []).length;
-	if (!textField.value) groupCounter.innerHTML = '0';
-	else groupCounter.innerHTML = (textField.value.trim().split(/\s+/) || []).length;
+	var input = textField.value;
+	charCounter.innerHTML = (input.match(/(.|\n|\r)/g) || []).length;
+	noWSpaceCounter.innerHTML = (input.match(/\S/g) || []).length;
+	letterCounter.innerHTML = (input.match(/[a-z]/gi) || []).length;
+	digitCounter.innerHTML = (input.match(/\d/g) || []).length;
+	groupCounter.innerHTML = (input.trim().split(/\s+/) || '').length;
 
-	if (undoHistory.current() !== textField.value) {
-		if (textField.value.length - undoHistory.current().length > 1 || textField.value.length - undoHistory.current().length < -1 || textField.value.length - undoHistory.current().length === 0) {
-			undoHistory.record(textField.value, true);
+	if (undoHistory.current() !== input) {
+		if (input.length - undoHistory.current().length > 1 || input.length - undoHistory.current().length < -1 || input.length - undoHistory.current().length === 0) {
+			undoHistory.record(input, true);
 		} else {
-			undoHistory.record(textField.value);
+			undoHistory.record(input);
 		}
 	}
 
 	undoCounter.innerHTML = undoHistory.currentIndex - 1;
-	if (undoCounter.innerHTML <= 0) {
-		undoCounter.style.visibility = 'hidden';
-	} else {
-		undoCounter.style.visibility = 'visible';
-	}
-
-	localStorage.setItem('text', lenTrim(textField.value));
+	undoCounter.innerHTML <= 0 ? (undoCounter.style.visibility = 'hidden') : (undoCounter.style.visibility = 'visible');
+	localStorage.setItem('text', lenTrim(input));
 });
 
 let outField = textField;
@@ -60,20 +55,6 @@ function altToggle() {
 		to.style.visibility = 'visible';
 		outField = altField;
 		tOutput = true;
-	}
-}
-
-let tSize = false;
-function toggleSize() {
-	const el = $('page_right');
-	el.style.transition = 'all 0.5s ease-in-out';
-
-	if (tSize) {
-		el.style.width = '100%';
-		tSize = false;
-	} else {
-		el.style.width = '0dvw';
-		tSize = true;
 	}
 }
 
@@ -904,6 +885,7 @@ function dragElement(element, direction) {
 		document.onmousemove = onMouseMove;
 		document.onmouseup = () => {
 			document.onmousemove = document.onmouseup = null;
+			second.style.transition = 'all 0.5s ease-in-out';
 		};
 	}
 

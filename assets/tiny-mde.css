@@ -12,6 +12,7 @@
 
 .TMMark_TMCode {
 	color: var(--color2);
+	font-size: 11px;
 }
 
 .TMFencedCodeBacktick,
@@ -48,8 +49,7 @@
 
 .TMCode {
 	border: thin solid #c0c0c07f;
-	border-radius: 2px rgb(255, 0, 0);
-	padding-right: 4px;
+	border-radius: 3px;
 }
 
 .TMBlockquote {
@@ -126,10 +126,10 @@
 	content: '';
 	position: absolute;
 	bottom: 50%;
-	left: 30%;
+	left: 15%;
 	border-bottom: 2px solid #808080b0;
 	border-radius: 20px;
-	width: 40%;
+	width: 70%;
 	z-index: 0;
 }
 

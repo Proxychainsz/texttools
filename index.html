@@ -352,7 +352,7 @@
 									</button>
 								</div>
 							</div>
-							<p id="tSelect">·</p>
+							<p id="tSelect"></p>
 						</div>
 						<div id="midAlt" class="altFadeOut">
 							<textarea id="altField" placeholder="[|>] Output area" style="padding-bottom: 40px"></textarea>
@@ -499,12 +499,26 @@
 			e.crossOrigin = `Anonymous`;
 			e.src = usrbg;
 
-			document.addEventListener('DOMContentLoaded', event => {
-				if (rand == 'true') bgSet(dailyBG);
+			let tSize = false;
+			if (window.innerWidth < 1000) {
+				toggleSize();
+			}
 
-				if (window.innerWidth < 1000) {
-					toggleSize();
+			function toggleSize() {
+				const e = document.getElementById('page_right');
+
+				if (tSize) {
+					e.style.width = '100%';
+					tSize = false;
+				} else {
+					e.style.width = '0dvw';
+					tSize = true;
 				}
+			}
+
+			document.addEventListener('DOMContentLoaded', event => {
+				$('page_right').style.transition = 'all 0.5s ease-in-out';
+				if (rand == 'true') bgSet(dailyBG);
 
 				const savedText =
 					localStorage.getItem('text') ||
