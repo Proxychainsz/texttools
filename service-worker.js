@@ -1,4 +1,4 @@
-const cacheName = 'TextTools_v012';
+const cacheName = 'TextTools_v013';
 const precacheResources = [
 	// '/',
 	'service-worker.js',

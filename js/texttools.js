@@ -1,8 +1,8 @@
-const tinyEditor = new TinyMDE.Editor({ textarea: 'textField' });
-const tinyOutput = new TinyMDE.Editor({ textarea: 'altField', content: '[|>] Output area' });
-const TinyMde = document.getElementsByClassName('TinyMDE');
-const undoHistory = new window.UndoRedojs(5);
-const textField = $('textField'),
+const tinyEditor = new TinyMDE.Editor({ textarea: 'textField' }),
+	tinyOutput = new TinyMDE.Editor({ textarea: 'altField', content: '[|>] Output area' }),
+	TinyMde = document.getElementsByClassName('TinyMDE'),
+	undoHistory = new window.UndoRedojs(5),
+	textField = $('textField'),
 	altField = $('altField'),
 	cipherField = $('cipherField'),
 	keyField = $('keyField'),
@@ -115,9 +115,9 @@ function redoButton() {
 document.onkeydown = KeyPressDown;
 function KeyPressDown(e) {
 	if (e.ctrlKey) {
-		if (e.keyCode == 89) redoButton(); // Y
-		if (e.keyCode == 90) undoButton(); // Z
-		if (e.keyCode == 65) setTimeout(() => selectCount(), 1); // a
+		if (e.keyCode == 89 && e.target.id !== 'keyField' && e.target.id !== 'cipherField') redoButton(); // Y
+		if (e.keyCode == 90 && e.target.id !== 'keyField' && e.target.id !== 'cipherField') undoButton(); // Z
+		if (e.keyCode == 65) selectCount(); // a
 	}
 
 	if (e.key === 'Enter' && e.target.id == 'keyField') {
@@ -139,7 +139,7 @@ tinyEditor.addEventListener('selection', e => {
 });
 
 function selectCount() {
-	selectCounter.innerHTML = window.getSelection().toString().length;
+	setTimeout(() => (selectCounter.innerHTML = window.getSelection().toString().length), 1);
 }
 
 function selectReset(e) {
@@ -303,39 +303,33 @@ function extractFibo(input) {
 	let fib = fibonacci(input.length);
 	const res = [];
 
-	fib = fib.map(x => x - 1); // array 1 xd
-	fib.forEach(i => res.push(input[i]));
+	fib.forEach(i => res.push(input[i - 1]));
 
 	return res.filter(x => x !== undefined).join(' ');
 }
 
-// https://github.com/0xbalazstoth/javascript-a1z26/blob/main/a1z26.js
-const theAlphabet = 'abcdefghijklmnopqrstuvwxyz';
 const a1z26 = {
-	enc(txt) {
-		txt = txt.toString().toLowerCase();
-		let encrypted = '';
-		for (let j = 0; j < txt.length; j++) {
-			for (let i = 0; i < theAlphabet.length; i++) {
-				if (theAlphabet[i] === txt[j]) {
-					encrypted += `${(i + 1).toString()} `;
-				}
-			}
-		}
-		return encrypted.substring(0, encrypted.length - ' '.length);
-	},
-	dec(txt) {
+	enc(txt, m) {
+		m = m || 1;
 		txt = txt.toLowerCase();
-		const split = txt.split(/\s+|\n/);
-		let decrypted = '';
-		for (let j = 0; j < split.length; j++) {
-			for (let i = 0; i < theAlphabet.length; i++) {
-				if (i + 1 == split[j]) {
-					decrypted += theAlphabet[i];
-				}
-			}
-		}
-		return decrypted;
+		return [...txt]
+			.map(x => {
+				if (/[a-z]/.test(x)) return x.charCodeAt(0) - (97 - m) + ' ';
+				else return x;
+			})
+			.join('')
+			.replace(/\s+/g, ' ');
+	},
+	dec(txt, m) {
+		m = m || 1;
+		return txt
+			.split(' ')
+			.map(x => {
+				if (x >= 0 && x <= 26) return String.fromCharCode(97 + (x - m));
+				else return ' ' + x + ' ';
+			})
+			.join('')
+			.replace(/\s+/g, ' ');
 	},
 };
 
@@ -1109,7 +1103,7 @@ function massEncode() {
 
 	if (isNumber(key)) {
 		result.RailFence = Enigmator.railfence.enc(txt, key);
-		result.Caesar = Enigmator.caesar(txt, key);
+		result.Caesar = Enigmator.caesar(txt, 26 - calculate['mod'](key));
 		result.Multiplicative = Cryptography.Multi.enc(txt, key);
 	}
 
@@ -1121,7 +1115,7 @@ function massEncode() {
 
 	result.Hill = Enigmator.hill.enc(txt, hillParser(key));
 	result.Playfair = Enigmator.playfair.enc(txt, key || '');
-	result.A1z26 = a1z26.enc(txt);
+	result.A1z26 = a1z26.enc(txt, key);
 	result.Atbash = Enigmator.atbash(txt);
 	result.Phone = Cryptography.Phone.enc(txt);
 	result.Morse = Enigmator.morse.enc(txt);
@@ -1162,14 +1156,14 @@ function massEncode() {
 	if ($('baseX').checked) {
 		const times = 37;
 		for (let i = 2; i < times; i++) {
-			result[`Base.${i}`] = CyberChef.base.enc(txt, i);
+			result[`Base_${i}`] = CyberChef.base.enc(txt, i);
 		}
 	}
 
 	if ($('charcodeX').checked) {
 		const times = 37;
 		for (let i = 2; i < times; i++) {
-			result[`Charcode.${i}`] = CyberChef.charcode.enc(txt, i);
+			result[`Charcode_${i}`] = CyberChef.charcode.enc(txt, i);
 		}
 	}
 
@@ -1208,9 +1202,7 @@ function massDecode() {
 
 	if (isNumber(key)) {
 		result.RailFence = Enigmator.railfence.dec(txt, key);
-		let k = key;
-		while (k > 26) k -= 26;
-		result.Caesar = Enigmator.caesar(txt, 26 - k);
+		result.Caesar = Enigmator.caesar(txt, key);
 		result.Multiplicative = Cryptography.Multi.dec(txt, key);
 	}
 
@@ -1220,7 +1212,7 @@ function massDecode() {
 	}
 
 	result.Playfair = Enigmator.playfair.dec(txt, key || '');
-	result.A1z26 = a1z26.dec(txt);
+	result.A1z26 = a1z26.dec(txt, key);
 	result.Atbash = Enigmator.atbash(txt);
 	result.Goldbug = Enigmator.goldbug.dec(txt);
 	result.Reversed = txt.split('').reverse().join('');
@@ -1266,14 +1258,14 @@ function massDecode() {
 	if ($('baseX').checked) {
 		const times = 37;
 		for (let i = 2; i < times; i++) {
-			result[`Base.${i}`] = CyberChef.base.dec(txt, i);
+			result[`Base_${i}`] = CyberChef.base.dec(txt, i);
 		}
 	}
 
 	if ($('charcodeX').checked) {
 		const times = 37;
 		for (let i = 2; i < times; i++) {
-			result[`Charcode.${i}`] = CyberChef.charcode.dec(txt, i);
+			result[`Charcode_${i}`] = CyberChef.charcode.dec(txt, i);
 		}
 	}
 
