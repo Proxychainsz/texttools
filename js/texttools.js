@@ -115,8 +115,8 @@ function redoButton() {
 document.onkeydown = KeyPressDown;
 function KeyPressDown(e) {
 	if (e.ctrlKey) {
-		if (e.keyCode == 89 && e.target.id !== 'keyField' && e.target.id !== 'cipherField') redoButton(); // Y
-		if (e.keyCode == 90 && e.target.id !== 'keyField' && e.target.id !== 'cipherField') undoButton(); // Z
+		if (e.keyCode == 89 && e.target.className !== 'input') redoButton(); // Y
+		if (e.keyCode == 90 && e.target.className !== 'input') undoButton(); // Z
 		if (e.keyCode == 65) selectCount(); // a
 	}
 
@@ -127,7 +127,7 @@ function KeyPressDown(e) {
 		});
 	}
 
-	if (e.target.classList[0] == 'TinyMDE' && e.key == 'Tab') {
+	if (e.target.className == 'TinyMDE' && e.key == 'Tab') {
 		e.preventDefault();
 		document.execCommand('insertText', false, '\t');
 	}
@@ -323,7 +323,7 @@ const a1z26 = {
 	dec(txt, m) {
 		m = m || 1;
 		return txt
-			.split(' ')
+			.split(/\s/)
 			.map(x => {
 				if (x >= 0 && x <= 26) return String.fromCharCode(97 + (x - m));
 				else return ' ' + x + ' ';
@@ -1149,7 +1149,7 @@ function massEncode() {
 	if ($('rotX').checked) {
 		const times = 26;
 		for (let i = 1; i < times; i++) {
-			result[`Rot.${i}`] = Enigmator.caesar(txt, i);
+			result[`Rot_${i}`] = Enigmator.caesar(txt, i);
 		}
 	}
 
@@ -1251,7 +1251,7 @@ function massDecode() {
 	if ($('rotX').checked) {
 		const times = 26;
 		for (let i = 1; i < times; i++) {
-			result[`Rot.${i}`] = Enigmator.caesar(txt, i);
+			result[`Rot_${i}`] = Enigmator.caesar(txt, i);
 		}
 	}
 
