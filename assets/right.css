@@ -151,12 +151,11 @@ resId {
 
 resDiv {
 	width: 100%;
-	margin-right: 2px;
+	margin-right: 2.5px;
 	height: 24px;
-	line-height: 100%;
 	padding: 4px;
 	align-items: center;
-	border: 1px solid transparent;
+	border: thin solid transparent;
 	background-color: var(--black-a2);
 	border-radius: 4px;
 	transition: all 0.1s ease-out;

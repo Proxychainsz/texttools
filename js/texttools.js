@@ -14,24 +14,28 @@ const tinyEditor = new TinyMDE.Editor({ textarea: 'textField' }),
 	groupCounter = $('groupCount'),
 	undoCounter = $('undoCounter');
 
-tinyEditor.addEventListener('change', e => {
-	var input = textField.value;
-	charCounter.innerHTML = (input.match(/(.|\n|\r)/g) || []).length;
-	noWSpaceCounter.innerHTML = (input.match(/\S/g) || []).length;
-	letterCounter.innerHTML = (input.match(/[a-z]/gi) || []).length;
-	digitCounter.innerHTML = (input.match(/\d/g) || []).length;
-	groupCounter.innerHTML = (input.trim().split(/\s+/) || '').length;
+tinyEditor.addEventListener('change', () => {
+	const input = textField.value;
+	charCounter.textContent = input.length;
+	noWSpaceCounter.textContent = (input.replace(/\s/g, '') || '').length;
+	letterCounter.textContent = (input.match(/[a-z]/gi) || []).length;
+	digitCounter.textContent = (input.match(/\d/g) || []).length;
+	groupCounter.textContent = (input.trim().split(/\s+/) || '').length;
 
 	if (undoHistory.current() !== input) {
-		if (input.length - undoHistory.current().length > 1 || input.length - undoHistory.current().length < -1 || input.length - undoHistory.current().length === 0) {
+		if (
+			input.length - undoHistory.current().length > 1 ||
+			input.length - undoHistory.current().length < -1 ||
+			input.length - undoHistory.current().length === 0
+		) {
 			undoHistory.record(input, true);
 		} else {
 			undoHistory.record(input);
 		}
 	}
 
-	undoCounter.innerHTML = undoHistory.currentIndex - 1;
-	undoCounter.innerHTML <= 0 ? (undoCounter.style.visibility = 'hidden') : (undoCounter.style.visibility = 'visible');
+	undoCounter.textContent = undoHistory.currentIndex - 1;
+	undoCounter.style.visibility = undoCounter.textContent <= 0 ? 'hidden' : 'visible';
 	localStorage.setItem('text', lenTrim(input));
 });
 
@@ -69,44 +73,44 @@ function updateInput() {
 
 function undoButton() {
 	if (undoHistory.undo(true) !== undefined && undoHistory.currentIndex > 1) {
-		let sel = tinyEditor.getSelection();
+		const sel = tinyEditor.getSelection();
 
 		if (sel !== null) {
-			let a = sel['col'];
-			let b = textField.value.length;
-			let c = undoHistory.undo(true).length;
+			const a = sel.col;
+			const b = textField.value.length;
+			const c = undoHistory.undo(true).length;
 
-			if (b >= c) sel['col'] = a - (b - c);
-			else sel['col'] = a + (c - b);
+			if (b >= c) sel.col = a - (b - c);
+			else sel.col = a + (c - b);
 		}
 		textField.value = undoHistory.undo();
 		updateInput();
 
 		setTimeout(() => {
 			TinyMde[0].focus();
-			if (sel !== null && sel['col'] >= 0) tinyEditor.setSelection(sel);
+			if (sel !== null && sel.col >= 0) tinyEditor.setSelection(sel);
 		}, 1);
 	}
 }
 
 function redoButton() {
 	if (undoHistory.redo(true) !== undefined) {
-		let sel = tinyEditor.getSelection();
-		let b = textField.value.length;
-		let c = undoHistory.redo(true).length;
+		const sel = tinyEditor.getSelection();
+		const b = textField.value.length;
+		const c = undoHistory.redo(true).length;
 
 		textField.value = undoHistory.redo();
 		updateInput();
 
 		if (sel !== null) {
-			let a = sel['col'];
+			const a = sel.col;
 
-			if (c >= b) sel['col'] = a + (c - b);
-			else sel['col'] = a + (b - c);
+			if (c >= b) sel.col = a + (c - b);
+			else sel.col = a + (b - c);
 
 			setTimeout(() => {
 				TinyMde[0].focus();
-				if (sel !== null && sel['col'] >= 0) tinyEditor.setSelection(sel);
+				if (sel !== null && sel.col >= 0) tinyEditor.setSelection(sel);
 			}, 1);
 		}
 	}
@@ -115,31 +119,39 @@ function redoButton() {
 document.onkeydown = KeyPressDown;
 function KeyPressDown(e) {
 	if (e.ctrlKey) {
-		if (e.keyCode == 89 && e.target.className !== 'input') redoButton(); // Y
-		if (e.keyCode == 90 && e.target.className !== 'input') undoButton(); // Z
-		if (e.keyCode == 65) selectCount(); // a
+		if (e.keyCode === 89 && e.target.className !== 'input') redoButton(); // Y
+		if (e.keyCode === 90 && e.target.className !== 'input') undoButton(); // Z
+		if (e.keyCode === 65) selectCount(); // a
 	}
 
-	if (e.key === 'Enter' && e.target.id == 'keyField') {
-		massDecode();
-		$('massDecode').animate([{ backgroundColor: 'var(--color1)' }, { backgroundColor: 'var(--color1-1a)' }], {
-			duration: 900,
-		});
+	if (e.key === 'Enter') {
+		if (e.target.id === 'cipherField') {
+			massEncode();
+			$('massEncode').animate([{ backgroundColor: 'var(--color1)' }, { backgroundColor: 'var(--color1-1a)' }], {
+				duration: 900,
+			});
+		}
+		if (e.target.id === 'keyField') {
+			massDecode();
+			$('massDecode').animate([{ backgroundColor: 'var(--color1)' }, { backgroundColor: 'var(--color1-1a)' }], {
+				duration: 900,
+			});
+		}
 	}
 
-	if (e.target.className == 'TinyMDE' && e.key == 'Tab') {
+	if (e.target.className === 'TinyMDE' && e.key === 'Tab') {
 		e.preventDefault();
 		document.execCommand('insertText', false, '\t');
 	}
 }
 
-tinyEditor.addEventListener('selection', e => {
-	let st = `${e.focus ? e.focus.row : '–'} : ${e.focus ? e.focus.col : '–'}`;
-	$('tSelect').innerHTML = st;
+tinyEditor.addEventListener('selection', (e) => {
+	const st = `${e.focus ? e.focus.row : '-'} : ${e.focus ? e.focus.col : '-'}`;
+	$('tSelect').textContent = st;
 });
 
 function selectCount() {
-	setTimeout(() => (selectCounter.innerHTML = window.getSelection().toString().length), 1);
+	setTimeout(() => (selectCounter.textContent = window.getSelection().toString().length), 1);
 }
 
 function selectReset(e) {
@@ -150,7 +162,7 @@ function selectReset(e) {
 	} else if (document.selection) {
 		document.selection.empty();
 	}
-	selectCounter.innerHTML = '0';
+	selectCounter.textContent = '0';
 }
 
 function $(e) {
@@ -189,18 +201,18 @@ function toBinary(n) {
 }
 
 function fromBinary(n) {
-	n = n.trim().split(' ');
-	return n.map(bin => String.fromCharCode(parseInt(bin, 2))).join('');
+	n = n.trim().split(/\s+/);
+	return n.map((bin) => String.fromCharCode(Number.parseInt(bin, 2))).join('');
 }
 
 function decToBinary(n) {
-	n = n.split(/\s+|\n/);
-	return n.map(x => (+x).toString(2).padStart(8, 0)).join(' ');
+	n = n.split(/\s+/);
+	return n.map((x) => (+x).toString(2).padStart(8, 0)).join(' ');
 }
 
 function binToDecimal(n) {
-	n = n.split(/\s+|\n/);
-	return n.map(x => parseInt(x, 2)).join(' ');
+	n = n.split(/\s+/);
+	return n.map((x) => Number.parseInt(x, 2)).join(' ');
 }
 
 function binFlip(txt) {
@@ -208,11 +220,11 @@ function binFlip(txt) {
 }
 
 function fromOctal(n) {
-	n = n.split(' ');
-	if (n.length == 1) {
+	n = n.split(/\s/);
+	if (n.length === 1) {
 		n = n.toString().match(/.{1,3}/g);
 	}
-	return n.map(x => String.fromCharCode(parseInt(x.padStart(3, '0'), 8))).join('');
+	return n.map((x) => String.fromCharCode(Number.parseInt(x.padStart(3, '0'), 8))).join('');
 }
 
 function xor(a, b) {
@@ -221,20 +233,20 @@ function xor(a, b) {
 	const bin = isBinary(a);
 	const hex = isHex(a);
 	const dec = isNumSpaces(a);
-	b = (b + a.substring(b.length)).split(' ');
-	a = a.split(/[\s\n]/);
+	b = (b + a.substring(b.length)).split(/\s+/);
+	a = a.split(/\s+/);
 
 	if (bin) {
 		res.push('Bin:');
-		a.forEach((_, i) => res.push((parseInt(a[i], 2) ^ parseInt(b[i], 2)).toString(2).padStart(8, 0)));
+		a.forEach((_, i) => res.push((Number.parseInt(a[i], 2) ^ Number.parseInt(b[i], 2)).toString(2).padStart(8, 0)));
 	} else if (hex) {
 		res.push('Hex:');
 		a.forEach((_, i) =>
 			res.push(
-				Number(parseInt(a[i], 16) ^ parseInt(b[i], 16))
+				Number(Number.parseInt(a[i], 16) ^ Number.parseInt(b[i], 16))
 					.toString(16)
-					.padStart(2, 0)
-			)
+					.padStart(2, 0),
+			),
 		);
 	} else if (dec) {
 		res.push('Dec:');
@@ -265,10 +277,9 @@ function parseB64(str) {
 		const dec = atob(str);
 		if (/[\x00-\x1F]/g.test(dec)) {
 			// if theres control characters return Uint8Array as hex
-			return [...dec].map(x => x.charCodeAt(0).toString(16).padStart(2, '0')).join(' ');
-		} else {
-			return decodeBase64(str);
+			return [...dec].map((x) => x.charCodeAt(0).toString(16).padStart(2, '0')).join(' ');
 		}
+		return decodeBase64(str);
 	} catch {
 		return;
 	}
@@ -299,48 +310,153 @@ function fibonacci(num) {
 }
 
 function extractFibo(input) {
-	input = input.split(/\s+|\n/);
-	let fib = fibonacci(input.length);
+	input = input.split(/\s+/);
+	const fib = fibonacci(input.length);
 	const res = [];
 
-	fib.forEach(i => res.push(input[i - 1]));
+	for (const i of fib) {
+		res.push(input[i - 1]);
+	}
 
-	return res.filter(x => x !== undefined).join(' ');
+	return res.filter((x) => x !== undefined).join(' ');
 }
 
 const a1z26 = {
 	enc(txt, m) {
-		m = m || 1;
+		m >= 1 || !m === '' ? (m = 1) : (m = 0);
+		let res = '';
 		txt = txt.toLowerCase();
-		return [...txt]
-			.map(x => {
-				if (/[a-z]/.test(x)) return x.charCodeAt(0) - (97 - m) + ' ';
-				else return x;
-			})
-			.join('')
-			.replace(/\s+/g, ' ');
+		for (const x of [...txt]) {
+			if (/[a-z]/.test(x)) res += `${x.charCodeAt(0) - (97 - m)} `;
+			else res += x;
+		}
+		return res.replace(/\s+/g, ' ');
 	},
 	dec(txt, m) {
-		m = m || 1;
-		return txt
-			.split(/\s/)
-			.map(x => {
-				if (x >= 0 && x <= 26) return String.fromCharCode(97 + (x - m));
-				else return ' ' + x + ' ';
-			})
-			.join('')
-			.replace(/\s+/g, ' ');
+		m >= 1 || !m === '' ? (m = 1) : (m = 0);
+		let res = '';
+		txt = txt.toLowerCase().split(/\s+/);
+		for (const x of txt) {
+			if (x >= 0 && x <= 26) res += String.fromCharCode(97 + (x - m));
+			else res += '';
+		}
+		return res.replace(/\s+/g, ' ');
+	},
+};
+
+const braille = {
+	abc: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_+=[]:;<>,./? ',
+	bra: '⠁⠃⠉⠙⠑⠋⠛⠓⠊⠚⠅⠇⠍⠝⠕⠏⠟⠗⠎⠞⠥⠧⠺⠭⠽⠵⠴⠂⠆⠒⠲⠢⠖⠶⠦⠔⠮⠈⠼⠫⠩⠘⠯⠡⠷⠾⠤⠸⠬⠿⠪⠻⠱⠰⠣⠜⠠⠨⠌⠹ ',
+	enc(txt) {
+		let res = '';
+		for (const char of txt.toUpperCase().split('')) {
+			const i = this.abc.indexOf(char);
+			res += this.bra.charAt(i);
+		}
+		return res;
+	},
+	dec(txt) {
+		let res = '';
+		for (const char of [...txt]) {
+			const i = this.bra.indexOf(char);
+			res += this.abc.charAt(i);
+		}
+		return res;
+	},
+};
+
+const dtmf = {
+	frequency: {
+		1209: { 697: '1', 770: '4', 852: '7', 941: '*' },
+		1336: { 697: '2', 770: '5', 852: '8', 941: '0' },
+		1477: { 697: '3', 770: '6', 852: '9', 941: '#' },
+		1633: { 697: 'A', 770: 'B', 852: 'C', 941: 'D' },
+	},
+	enc(txt) {
+		let res = '';
+		for (const char of txt.toUpperCase().split('')) {
+			for (const outer in this.frequency) {
+				for (const inner in this.frequency[outer]) {
+					if (this.frequency[outer][inner] === char) {
+						res += `${[outer]}-${inner} `;
+					}
+				}
+			}
+		}
+		return res.trim();
+	},
+	dec(txt) {
+		let res = '';
+		for (const n of txt.split(' ')) {
+			const freq = n.split('-');
+			try {
+				res += this.frequency[freq[0]][freq[1]];
+			} catch {}
+		}
+		return res;
+	},
+};
+
+const smsMultitap = {
+	keyMap: {
+		2: 'abc',
+		3: 'def',
+		4: 'ghi',
+		5: 'jkl',
+		6: 'mno',
+		7: 'pqrs',
+		8: 'tuv',
+		9: 'wxyz',
+		0: ' ',
+	},
+	enc(txt) {
+		txt = txt.replace(/[^a-z ]+/gi, '').replace(/\s+/g, ' ');
+		let res = '';
+		for (let i = 0; i < txt.length; i++) {
+			const char = txt[i].toLowerCase();
+			for (const key in this.keyMap) {
+				if (this.keyMap[key].includes(char)) {
+					res += key.repeat(this.keyMap[key].indexOf(char) + 1);
+					break;
+				}
+			}
+		}
+		return res.replace(/0+/g, '0');
+	},
+	dec(txt) {
+		txt = txt.match(/[2-9\s+0]*/g).join('');
+		let res = '';
+		let i = 0;
+
+		while (i < txt.length) {
+			const char = txt[i];
+			let count = 1;
+
+			while (i + 1 < txt.length && txt[i + 1] === char) {
+				count++;
+				i++;
+			}
+
+			if (char in this.keyMap) {
+				const letters = this.keyMap[char];
+				const letterIndex = (count - 1) % letters.length;
+				res += letters[letterIndex];
+			}
+			i++;
+		}
+
+		return res;
 	},
 };
 
 // https://github.com/patrik-csak/BB26
 const base26 = {
 	enc(string, v) {
-		let res = [];
+		const res = [];
 		string
 			.toUpperCase()
-			.split(' ')
-			.map(string => {
+			.split(/\s+/)
+			.map((string) => {
 				if (!/[A-Z]/.test(string)) return;
 
 				let number = 0;
@@ -353,18 +469,27 @@ const base26 = {
 		return res.join(' ').trim();
 	},
 	dec(number, v) {
-		let res = [];
-		number.split(' ').map(number => {
+		const res = [];
+		number.split(/\s+/).map((n) => {
+			if (n > Number.MAX_SAFE_INTEGER) return;
 			let string = '';
-			while (number > 0) {
-				string = toChar(number % 26 || 26, v) + string;
-				number = Math.floor((number - v) / 26);
+			while (n > 0) {
+				string = toChar(n % 26 || 26, v) + string;
+				n = Math.floor((n - v) / 26);
 			}
 			res.push(string);
 		});
-		return res.join(' ').trim();
+		return res.join(' ').replaceAll('[', 'A').trim(); // ??
 	},
 };
+
+function charToDecimal(letter, v) {
+	return letter.codePointAt(0) - 65 + v;
+}
+
+function toChar(number, v) {
+	return String.fromCodePoint(65 - v + number);
+}
 
 /* --------------------------------------------
 	Buttons
@@ -433,10 +558,10 @@ remSpecial.onclick = () => {
 	updateInput();
 };
 
-btnTrim.onclick = e => {
+btnTrim.onclick = (e) => {
 	updateHistory();
 	const input = textField.value;
-	var res = [];
+	let res = [];
 
 	if (e.ctrlKey) {
 		res.push(xTrim(input));
@@ -452,17 +577,18 @@ btnTrim.onclick = e => {
 
 btnSplit.onclick = () => {
 	updateHistory();
-	var input = xTrim(textField.value);
-	const sValue = prompt('Split into segments of x length', '8');
-	if (!sValue || !input) return;
+	const input = xTrim(textField.value);
+	const segmentLength = prompt('Split into segments of x length', '8');
+	if (!segmentLength || !input) return;
 	const res = [];
 
 	function chunkString(str, length) {
-		return str.match(new RegExp(`(.|[\r\n+]){1,${length}}`, 'g'));
+		const regex = new RegExp(`.{1,${length}}`, 'g');
+		return str.match(regex) || [];
 	}
 
 	for (const lines of input.split('\n')) {
-		res.push(chunkString(lines, sValue).join(' '));
+		res.push(chunkString(lines, segmentLength).join(' '));
 	}
 	outField.value = res.join('\n');
 	updateInput();
@@ -470,20 +596,21 @@ btnSplit.onclick = () => {
 
 btnSort.onclick = () => {
 	updateHistory();
-	const input = textField.value;
-	let res;
+	const input = textField.value.trim().split(/\s+/);
 
-	const regExp = /[^0-9.|^\s+]/g;
-	if (regExp.test(input)) {
-		res = input
-			.split(/\s+|\n/)
-			.sort()
-			.join(' ');
-	} else {
-		res = new Float64Array(input.split(/\s+|\n/));
-		res = res.sort().join(' ');
-	}
-	outField.value = res;
+	const comparator = (a, b) => {
+		const isANumeric = !Number.isNaN(Number.parseFloat(a)) && Number.isFinite(a);
+		const isBNumeric = !Number.isNaN(Number.parseFloat(b)) && Number.isFinite(b);
+
+		if (isANumeric && isBNumeric) {
+			return Number.parseFloat(a) - Number.parseFloat(b);
+		}
+		if (isANumeric) return -1;
+		if (isBNumeric) return 1;
+		return a.localeCompare(b);
+	};
+
+	outField.value = input.sort(comparator).join(' ');
 	updateInput();
 };
 
@@ -494,7 +621,7 @@ padStart.onclick = () => {
 	if (len == null) return;
 	const str = prompt('Fill String', '0');
 	if (str == null) return;
-	outField.value = input.map(x => x.padStart(len, str)).join(' ');
+	outField.value = input.map((x) => x.padStart(len, str)).join(' ');
 	updateInput();
 };
 
@@ -505,8 +632,7 @@ padEnd.onclick = () => {
 	if (len == null) return;
 	const str = prompt('Fill String', '0');
 	if (str == null) return;
-
-	outField.value = input.map(x => x.padEnd(len, str)).join(' ');
+	outField.value = input.map((x) => x.padEnd(len, str)).join(' ');
 	updateInput();
 };
 
@@ -661,10 +787,10 @@ const calculate = {
 	'/': (n, val) => n / val,
 	'%': (n, val) => n % val,
 	mod: (n, val) => ((n % val) + val) % val,
-	power: (n, val) => Math.pow(n, val),
-	round: n => Math.round(n),
-	trunc: n => Math.trunc(n),
-	sqrt: n => Math.sqrt(n),
+	power: (n, val) => n ** val,
+	round: (n) => Math.round(n),
+	trunc: (n) => Math.trunc(n),
+	sqrt: (n) => Math.sqrt(n),
 };
 
 btnCalculate.onclick = () => {
@@ -681,31 +807,21 @@ btnCalculate.onclick = () => {
 			outField.value = x.map(Number).reduce((a, b) => +a + +b, 0);
 			return updateInput();
 		}
+		default:
+			for (const line of input.split(/\n/)) {
+				for (const num of line.split(/\s+/)) {
+					reg.test(num) ? (res += calculate[op](+num, val)) : (res += num);
+				}
+			}
+
+			outField.value = res;
+			updateInput();
 	}
-
-	res += input
-		.split('\n')
-		.map(line =>
-			line
-				.split(' ')
-				.map(n => {
-					if (reg.test(n)) {
-						return calculate[op](+n, val);
-					}
-					return n;
-				})
-				.join(' ')
-		)
-		.join('\n');
-
-	outField.value = res;
-	updateInput();
 };
 
 calcOP.onchange = () => {
-	var el = $('calcValue');
-	if (calcOP.selectedIndex >= 7) el.hidden = true;
-	else el.hidden = false;
+	const el = $('calcValue');
+	calcOP.selectedIndex >= 7 ? (el.hidden = true) : (el.hidden = false);
 };
 
 btnBinaryFlip.onclick = () => {
@@ -714,7 +830,7 @@ btnBinaryFlip.onclick = () => {
 	updateInput();
 };
 
-btnSearchReplace.onclick = e => {
+btnSearchReplace.onclick = (e) => {
 	updateHistory();
 	const input = textField.value;
 	const vFind = inputSearch.value;
@@ -723,7 +839,7 @@ btnSearchReplace.onclick = e => {
 	const eRepl = regexpEscape(vRepl);
 	let res = '';
 
-	if (vFind == '' || vFind == null || vRepl == null) return;
+	if (vFind === '' || vFind == null || vRepl == null) return;
 
 	if (e.ctrlKey) {
 		const regex = new RegExp(`(${eFind})|${eRepl}`, 'g');
@@ -757,20 +873,24 @@ function isMorse(txt) {
 	return /^[.\\/s-]/.test(txt);
 }
 
+function isBraille(txt) {
+	return /^[\u2800-\u28FF\s+]+$/.test(txt);
+}
+
 function isBinary(txt) {
 	return /^[01\s]+$/.test(txt);
 }
 
 function isHex(txt) {
-	return /^[0-9A-Fa-f\s]+$/.test(txt);
+	return /^[0-9a-f\s]+$/i.test(txt);
 }
 
 function isLetters(txt) {
-	return /^[A-Za-z]/.test(txt);
+	return /^[a-z]/i.test(txt);
 }
 
 function isLettersAndSpaces(txt) {
-	return /^[A-Za-z\s]*$/.test(txt);
+	return /^[a-z\s]*$/i.test(txt);
 }
 
 function isNumber(txt) {
@@ -785,6 +905,12 @@ function isBacon(txt) {
 	return /^[ABab\s]*$/.test(txt);
 }
 
+function isDtmf(txt) {
+	txt = txt.replace(/[^\d- ]/g, '');
+	const regex = /^(\d{4}-\d{3})(?:\s+(\d{4}-\d{3}))*$/;
+	return regex.test(txt.trim());
+}
+
 function removeInvalid(txt) {
 	if (isEmpty(txt)) return;
 	const ctrlChars = /[\u0000-\u001F\u007F-\u009F]/g;
@@ -792,7 +918,7 @@ function removeInvalid(txt) {
 		.toString()
 		.replace(ctrlChars, '')
 		.replace(/NaN/g, '')
-		.replace(/^[?\s]*$/, '');
+		.replace(/([?]\s)*/g, '');
 	return res.trim();
 }
 
@@ -805,6 +931,7 @@ function isEmpty(e) {
 		case false:
 		case Number.isNaN:
 		case 'NaN':
+		case !Number.isFinite:
 		case undefined:
 			return true;
 		default:
@@ -819,31 +946,25 @@ function regexpEscape(str) {
 function lenTrim(str, max) {
 	max = max || 400000;
 	if (str.length > max) {
-		console.warn('Input length (', str.length, ') exceeds (', max, ') truncating to prevent browser from crashing.');
 		return str.slice(0, max);
 	}
 	return str;
 }
 
-function to2dArray(key, size, out) {
-	out = out || [];
-	if (!key.length) return out;
-	out.push(key.slice(0, size));
-	return to2dArray(key.slice(size), size, out);
+function to2dArray(key, size) {
+	const out = [];
+	while (key.length) {
+		out.push(key.splice(0, size));
+	}
+	return out;
 }
 
 function hillParser(key) {
-	if (isLettersAndSpaces(key)) {
-		key = a1z26
-			.enc(key)
-			.split(' ')
-			.map(x => x - 1)
-			.join(' ');
-	}
-	key = key.split(' ');
+	if (isLettersAndSpaces(key)) key = a1z26.enc(key, 0);
+	key = key.trim().split(/\s+/);
 	let size;
 
-	if (key.length == 4) size = 2;
+	if (key.length === 4) size = 2;
 	else if (key.length >= 9) {
 		size = 3;
 		key = key.slice(0, 9);
@@ -851,19 +972,11 @@ function hillParser(key) {
 	return to2dArray(key, size);
 }
 
-function charToDecimal(letter, v) {
-	return letter.codePointAt(0) - 'A'.codePointAt(0) + v;
-}
-
-function toChar(number, v) {
-	return String.fromCodePoint('A'.codePointAt(0) - v + number);
-}
-
 // Page resizer: https://stackoverflow.com/a/55202728
 function dragElement(element, direction) {
-	let md; // remember mouse down info
 	const first = $('page_left');
 	const second = $('page_right');
+	let md; // remember mouse down info
 
 	element.onmousedown = onMouseDown;
 
@@ -903,14 +1016,18 @@ dragElement($('separator'), 'H');
 
 // Text scrambler: https://stackoverflow.com/a/76258145
 const randomString = (n, r = '') => {
-	while (n--) r += String.fromCharCode(((r = (Math.random() * 62) | 0), (r += r > 9 ? (r < 36 ? 55 : 61) : 48)));
+	while (n--) {
+		let rand = Math.floor(Math.random() * 62) | 0;
+		rand = rand + (rand > 9 ? (rand < 36 ? 55 : 61) : 48);
+		r += String.fromCharCode(rand);
+	}
 	return r;
 };
 
-const unscramble = el => {
-	const chars = [...el.dataset.scramble];
+const scramble = (el) => {
+	clearInterval(el._itv);
+	const chars = [...el.textContent];
 	const tot = chars.length;
-
 	let iteration = 0;
 	let ch = 0;
 	let solved = '';
@@ -928,19 +1045,20 @@ const unscramble = el => {
 			clearInterval(el._itv);
 		}
 		iteration += 1;
-	}, 12);
+	}, 18);
 };
 
-const scramble = el => {
+const unscramble = (el) => {
 	clearInterval(el._itv);
-	el.textContent = randomString([...el.dataset.scramble].length);
+	el.textContent = el.dataset.originalText;
 };
 
-const scrambler = el => {
-	el.addEventListener('mouseenter', unscramble.bind(null, el));
-	el.addEventListener('mouseleave', scramble.bind(null, el));
-	scramble(el);
+const scrambler = (el) => {
+	el.dataset.originalText = el.textContent;
+	el.addEventListener('mouseenter', scramble.bind(null, el));
+	el.addEventListener('mouseleave', unscramble.bind(null, el));
 };
+
 document.querySelectorAll('[data-scramble]').forEach(scrambler);
 
 function openModal() {
@@ -948,9 +1066,9 @@ function openModal() {
 	dialogDiv.style.opacity = '1';
 	window.dialog.showModal();
 }
-window.onclick = function (event) {
+window.onclick = (event) => {
 	const dialogDiv = $('dialog');
-	if (event.target == dialogDiv) {
+	if (event.target === dialogDiv) {
 		dialogDiv.style.opacity = '0';
 		window.dialog.close();
 	}
@@ -966,19 +1084,46 @@ const RGBToHSL = (r, g, b) => {
 	r /= 255;
 	g /= 255;
 	b /= 255;
-	const l = Math.max(r, g, b);
-	const s = l - Math.min(r, g, b);
-	const h = s ? (l === r ? (g - b) / s : l === g ? 2 + (b - r) / s : 4 + (r - g) / s) : 0;
-	return [60 * h < 0 ? 60 * h + 360 : 60 * h, 100 * (s ? (l <= 0.5 ? s / (2 * l - s) : s / (2 - (2 * l - s))) : 0), (100 * (2 * l - s)) / 2];
+
+	const max = Math.max(r, g, b);
+	const min = Math.min(r, g, b);
+	let h,
+		s,
+		l = (max + min) / 2;
+
+	if (max === min) {
+		h = s = 0;
+	} else {
+		const d = max - min;
+		s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+		switch (max) {
+			case r:
+				h = (g - b) / d + (g < b ? 6 : 0);
+				break;
+			case g:
+				h = (b - r) / d + 2;
+				break;
+			case b:
+				h = (r - g) / d + 4;
+				break;
+		}
+		h /= 6;
+	}
+
+	h = Math.round(h * 360);
+	s = Math.round(s * 100);
+	l = Math.round(l * 100);
+
+	return [h, s, l];
 };
 
 function bgSet(img) {
 	const bgElement = $('bgElement');
-	bgElement.crossOrigin = `Anonymous`;
+	bgElement.crossOrigin = 'Anonymous';
 	bgElement.src = img;
 	let hsl = [];
 
-	bgElement.onload = function () {
+	bgElement.onload = () => {
 		hsl = bgGetColor(bgElement);
 		document.documentElement.style.setProperty('--h', hsl[0]);
 		document.documentElement.style.setProperty('--s', hsl[1]);
@@ -992,52 +1137,45 @@ function bgSet(img) {
 function bgGetColor(bgElement) {
 	const rgb = colorThief.getColor(bgElement);
 	const hsl = RGBToHSL(rgb[0], rgb[1], rgb[2]);
-	const h = Math.round(hsl[0]);
-	const s = Math.round(hsl[1]);
-	return [h, `${s}%`];
-}
-
-function complementary(h, s) {
-	h += s;
-	h = calculate.mod(h, 180);
-	return h;
+	return [hsl[0], `${hsl[1]}%`];
 }
 
 function processImage(base64) {
 	return new Promise((resolve, reject) => {
-		document.documentElement.style.cursor = 'wait';
-		setTimeout(() => {
-			document.documentElement.style.cursor = 'default';
-		}, 5000);
 		const maxFileSize = 333666;
 		const img = new Image();
-		img.crossOrigin = `Anonymous`;
-		img.onload = function () {
+		document.documentElement.style.cursor = 'wait';
+
+		img.onload = () => {
 			const canvas = document.createElement('canvas');
 			const ctx = canvas.getContext('2d');
-			let { width } = img;
-			let { height } = img;
-			let resizedBase64 = null;
-			while (resizedBase64 == null) {
-				console.log(`usrBG: ${width} x ${height}`);
-				canvas.width = width;
-				canvas.height = height;
-				ctx.drawImage(img, 0, 0, width, height);
-				if (canvas.toDataURL('image/jpg').length > maxFileSize) {
-					width = Math.round(width * 0.7);
-					height = Math.round(height * 0.7);
-				} else {
-					resizedBase64 = canvas.toDataURL('image/jpg');
-				}
+			let { width, height } = img;
+			let scale = 1.0;
+
+			while (canvas.toDataURL('image/jpeg').length > maxFileSize && scale > 0.1) {
+				scale *= 0.7;
+				width = Math.round(img.width * scale);
+				height = Math.round(img.height * scale);
 			}
-			console.log(`Saved usrBG: ${width} x ${height}`);
+
+			canvas.width = width;
+			canvas.height = height;
+			ctx.drawImage(img, 0, 0, width, height);
+
+			const resizedBase64 = canvas.toDataURL('image/jpeg');
 			document.documentElement.style.cursor = '';
-			resolve(resizedBase64);
 			canvas.remove();
+			resolve(resizedBase64);
 		};
+
+		img.onerror = (err) => {
+			// reject(err);
+			document.documentElement.style.cursor = '';
+			$('inputBgURL').value = 'CORS Error: Cant access image. Try uploading an image instead?';
+		};
+
+		img.crossOrigin = 'Anonymous';
 		img.src = base64;
-	}).catch(err => {
-		console.log('\n', 'Oops! ', err, '\n');
 	});
 }
 
@@ -1045,7 +1183,7 @@ dialogURL.onclick = () => {
 	const imgURL = $('inputBgURL').value || dailyBG;
 	const ext = /(.*?)\.(gif|webp|webm)/i;
 
-	if (imgURL == dailyBG) {
+	if (imgURL === dailyBG) {
 		localStorage.setItem('random', 'true');
 	} else {
 		localStorage.removeItem('random');
@@ -1059,10 +1197,10 @@ dialogURL.onclick = () => {
 dialogFile.onchange = () => {
 	const file = $('dialogFile').files[0];
 	const imgFile = new FileReader();
-	const ext = /(.*?)\.(gif|webp)/i;
+	const ext = /(.*?)\.(gif|webp|webm)/i;
 	let baseString;
 
-	imgFile.onloadend = function () {
+	imgFile.onloadend = () => {
 		baseString = imgFile.result;
 		localStorage.removeItem('random');
 
@@ -1081,12 +1219,9 @@ function massEncode() {
 	const txt = cipherField.value.trim();
 	const key = keyField.value.trim();
 	const result = {};
-	let element = '';
-
 	if (isEmpty(txt)) return;
-	$('resContainer').innerHTML = '';
 
-	if (!isNumSpaces(key) && key != '') {
+	if (!isNumSpaces(key) && key !== '') {
 		result.Vigenere = Enigmator.vigenere.enc(txt, key);
 		result.Autokey = Enigmator.autokey.enc(txt, key);
 		result.Beaufort = Enigmator.beaufort.enc(txt, key);
@@ -1103,7 +1238,7 @@ function massEncode() {
 
 	if (isNumber(key)) {
 		result.RailFence = Enigmator.railfence.enc(txt, key);
-		result.Caesar = Enigmator.caesar(txt, 26 - calculate['mod'](key));
+		result[`Caesar Shift +${key % 26}`] = Enigmator.caesar(txt, key % 26);
 		result.Multiplicative = Cryptography.Multi.enc(txt, key);
 	}
 
@@ -1118,9 +1253,12 @@ function massEncode() {
 	result.A1z26 = a1z26.enc(txt, key);
 	result.Atbash = Enigmator.atbash(txt);
 	result.Phone = Cryptography.Phone.enc(txt);
+	result.sms_Multitap = smsMultitap.enc(txt);
+	result.dtmf = dtmf.enc(txt);
 	result.Morse = Enigmator.morse.enc(txt);
 	result.Tapcode = Boxentriq.Tapcode.enc(txt);
 	result.Tapcode_Dots = Boxentriq.Tapcode.enc(txt, 'dots');
+	result.Braille = braille.enc(txt);
 	result.Goldbug = Enigmator.goldbug.enc(txt);
 	result.Reversed = txt.split('').reverse().join('');
 
@@ -1138,7 +1276,7 @@ function massEncode() {
 		result.Binary = toBinary(txt);
 		result.Decimal_to_Binary = decToBinary(txt);
 		result.xor = xor(txt, key);
-		result.Binary_Flip = binFlip(txt.replace(/[^0-1 ]/g, '').replace(/\s\s+/g, ' '));
+		result.Binary_Flip = binFlip(txt.replace(/[^0-1 ]/g, '').replace(/\s+/g, ' '));
 		result.Baudot_v1 = Boxentriq.baudot.enc(txt, 'v1');
 		result.Baudot_v2 = Boxentriq.baudot.enc(txt, 'v2');
 		result.UUEncoding = Enigmator.uuencoding.enc(txt);
@@ -1147,44 +1285,33 @@ function massEncode() {
 	}
 
 	if ($('rotX').checked) {
-		const times = 26;
-		for (let i = 1; i < times; i++) {
+		for (let i = 1; i < 26; i++) {
 			result[`Rot_${i}`] = Enigmator.caesar(txt, i);
 		}
 	}
 
 	if ($('baseX').checked) {
-		const times = 37;
-		for (let i = 2; i < times; i++) {
+		for (let i = 2; i < 37; i++) {
 			result[`Base_${i}`] = CyberChef.base.enc(txt, i);
 		}
 	}
 
 	if ($('charcodeX').checked) {
-		const times = 37;
-		for (let i = 2; i < times; i++) {
+		for (let i = 2; i < 37; i++) {
 			result[`Charcode_${i}`] = CyberChef.charcode.enc(txt, i);
 		}
 	}
 
-	for (const i in result) {
-		result[i] = removeInvalid(result[i]);
-		if (!isEmpty(result[i]) && result[i] != txt)
-			element += `<resId>${i.replaceAll('_', ' ')}</resId><resDiv><textarea id='${i}Res' class='resTxtArea' ondblclick='copyResults(this.id)' readonly>${result[i]}</textarea></resDiv>`;
-	}
-	$('resContainer').insertAdjacentHTML('beforeend', element);
+	genResElements(result, txt);
 }
 
 function massDecode() {
 	const txt = cipherField.value.trim();
 	const key = keyField.value.trim();
 	const result = {};
-	let element = '';
-
 	if (isEmpty(txt)) return;
-	$('resContainer').innerHTML = '';
 
-	if (key != '') {
+	if (key !== '') {
 		result.Vigenere = Enigmator.vigenere.dec(txt, key);
 		result.Autokey = Enigmator.autokey.dec(txt, key);
 		result.Beaufort = Enigmator.beaufort.enc(txt, key);
@@ -1195,14 +1322,14 @@ function massDecode() {
 		result.Hill = Enigmator.hill.dec(txt, hillParser(key));
 	}
 
-	if (isNumSpaces(key) && key.length > 2) {
+	if (isNumSpaces(key) && key.length >= 2) {
 		const k = key.split(' ');
 		result.Affine = Enigmator.affine.dec(txt, k[0], k[1]);
 	}
 
 	if (isNumber(key)) {
 		result.RailFence = Enigmator.railfence.dec(txt, key);
-		result.Caesar = Enigmator.caesar(txt, key);
+		result[`Caesar Shift -${key % 26}`] = Enigmator.caesar(txt, (26 - key) % 26);
 		result.Multiplicative = Cryptography.Multi.dec(txt, key);
 	}
 
@@ -1218,19 +1345,25 @@ function massDecode() {
 	result.Reversed = txt.split('').reverse().join('');
 	result.Fibonacci = extractFibo(txt);
 
+	if (isDtmf(txt)) {
+		result.dtmf = dtmf.dec(txt);
+	}
+
 	if (isNumSpaces(txt)) {
 		result.Phone = Cryptography.Phone.dec(txt);
+		result.sms_Multitap = smsMultitap.dec(txt);
 		result.Tapcode = Boxentriq.Tapcode.dec(txt);
 		result.Polybius = Cryptography.Polybius.dec(txt);
 	}
 
-	if (isMorse(txt)) {
+	if (isMorse(txt) || isBraille(txt)) {
 		result.Morse = Enigmator.morse.dec(txt);
 		result.Tapcode = Boxentriq.Tapcode.dec(txt, 'dots');
+		result.Braille = braille.dec(txt);
 	}
 
 	if ($('encodings').checked) {
-		result.Ascii = String.fromCharCode.apply(this, txt.split(' '));
+		result.Ascii = String.fromCharCode.apply(this, txt.split(/\s+/));
 		result.Base64 = parseB64(txt);
 		result.Base32 = Enigmator.base32.dec(txt);
 		result.Base26_0 = base26.dec(txt, 0);
@@ -1240,7 +1373,7 @@ function massDecode() {
 		result.Binary = fromBinary(txt);
 		result.Binary_to_Decimal = binToDecimal(txt).replace(/\s\s+/g, '');
 		result.xor = xor(txt, key);
-		result.Binary_Flip = binFlip(txt.replace(/[^0-1 ]/g, '').replace(/\s\s+/g, ' '));
+		result.Binary_Flip = binFlip(txt.replace(/[^0-1 ]/g, '').replace(/\s+/g, ' '));
 		result.Baudot_v1 = Boxentriq.baudot.dec(txt, 'v1');
 		result.Baudot_v2 = Boxentriq.baudot.dec(txt, 'v2');
 		result.UUEncoding = Enigmator.uuencoding.dec(txt);
@@ -1249,30 +1382,35 @@ function massDecode() {
 	}
 
 	if ($('rotX').checked) {
-		const times = 26;
-		for (let i = 1; i < times; i++) {
+		for (let i = 1; i < 26; i++) {
 			result[`Rot_${i}`] = Enigmator.caesar(txt, i);
 		}
 	}
 
 	if ($('baseX').checked) {
-		const times = 37;
-		for (let i = 2; i < times; i++) {
+		for (let i = 2; i < 37; i++) {
 			result[`Base_${i}`] = CyberChef.base.dec(txt, i);
 		}
 	}
 
 	if ($('charcodeX').checked) {
-		const times = 37;
-		for (let i = 2; i < times; i++) {
+		for (let i = 2; i < 37; i++) {
 			result[`Charcode_${i}`] = CyberChef.charcode.dec(txt, i);
 		}
 	}
 
-	for (const i in result) {
-		result[i] = removeInvalid(result[i]);
-		if (!isEmpty(result[i]) && result[i] != txt)
-			element += `<resId>${i.replaceAll('_', ' ')}</resId><resDiv><textarea id='${i}Res' class='resTxtArea' ondblclick='copyResults(this.id)' readonly>${result[i]}</textarea></resDiv>`;
+	genResElements(result, txt);
+}
+
+function genResElements(results, txt) {
+	let element = '';
+
+	for (const i in results) {
+		results[i] = removeInvalid(results[i]);
+		if (!isEmpty(results[i]) && results[i] !== txt)
+			element += `<resId>${i.replaceAll('_', ' ')}</resId><resDiv><textarea id='${i}Res' class='resTxtArea' ondblclick='copyResults(this.id)' readonly>${results[i]}</textarea></resDiv>`;
 	}
+
+	$('resContainer').innerHTML = '';
 	$('resContainer').insertAdjacentHTML('beforeend', element);
 }

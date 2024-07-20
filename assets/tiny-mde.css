@@ -54,9 +54,8 @@
 
 .TMBlockquote {
 	/* font-style: italic; */
-	/* border-left: 1px solid #c0c0c0; */
-	/* padding-left: 0px; */
-	margin-left: 4px;
+	margin-left: 2ch;
+	color: var(--color4-1);
 }
 
 .TMMark {

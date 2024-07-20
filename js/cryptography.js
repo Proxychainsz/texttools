@@ -3,8 +3,8 @@
 
 const Cryptography = {
 	Phone: {
-		cipher: ['21', '22', '23', '31', '32', '33', '41', '42', '43', '51', '52', '53', '61', '62', '63', '71', '72', '73', '74', '81', '82', '83', '91', '92', '93', '94'],
-		alphabet: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
+		cipher: [' ', '21', '22', '23', '31', '32', '33', '41', '42', '43', '51', '52', '53', '61', '62', '63', '71', '72', '73', '74', '81', '82', '83', '91', '92', '93', '94'],
+		alphabet: [' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
 
 		enc(message) {
 			const final = [];
@@ -174,7 +174,7 @@ const Cryptography = {
 			const finalResult = [];
 			input
 				.toLowerCase()
-				.split(' ')
+				.split(/\s+/)
 				.forEach(word => {
 					word.split('').forEach(character => {
 						if (character.match(/([^a-z\s])/g)) {
@@ -192,11 +192,11 @@ const Cryptography = {
 		dec(input) {
 			let result = '';
 			const finalResult = [];
-			if (input.split(' ').join('').length % 2 !== 0) return false;
+			if (input.split(/\s+/).join('').length % 2 !== 0) return false;
 
 			input
 				.replace(/\s/g, '')
-				.split(' ')
+				.split(/\s+/)
 				.forEach(decryptedWord => {
 					decryptedWord.match(/\d{1,2}/g).forEach(num => {
 						if (parseInt(num) === 42) {
@@ -216,7 +216,7 @@ const Cryptography = {
 function isTitleCase(str) {
 	return str
 		.toLowerCase()
-		.split(' ')
+		.split(/\s+/)
 		.map(word => word.replace(word.charAt(0), word.charAt(0).toUpperCase()))
 		.join(' ');
 }

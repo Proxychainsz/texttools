@@ -1,4 +1,4 @@
-const cacheName = 'TextTools_v014';
+const cacheName = 'TextTools_v015';
 const precacheResources = [
 	// '/',
 	'service-worker.js',
@@ -34,22 +34,20 @@ const precacheResources = [
 	'js/lib/xor/XORCipher.js',
 ];
 
-self.addEventListener('install', function (e) {
+self.addEventListener('install', (e) => {
 	console.log('[Service Worker] Install');
 	e.waitUntil(
 		caches
 			.open(cacheName)
-			.then(function (cache) {
+			.then((cache) => {
 				console.log('[Service Worker] Caching app shell and content');
 				return cache.addAll(precacheResources);
 			})
-			.then(function (e) {
-				return self.skipWaiting();
-			})
+			.then((e) => self.skipWaiting()),
 	);
 });
 
-self.addEventListener('fetch', e => {
+self.addEventListener('fetch', (e) => {
 	if (!(e.request.url.indexOf('http') === 0)) return;
 	e.respondWith(
 		(async () => {
@@ -63,22 +61,22 @@ self.addEventListener('fetch', e => {
 			// console.log(`[Service Worker] Caching new resource: ${e.request.url}`);
 			cache.put(e.request, response.clone());
 			return response;
-		})()
+		})(),
 	);
 });
 
-self.addEventListener('activate', e => {
+self.addEventListener('activate', (e) => {
 	e.waitUntil(
-		caches.keys().then(keyList => {
+		caches.keys().then((keyList) => {
 			return Promise.all(
-				keyList.map(key => {
+				keyList.map((key) => {
 					if (key === cacheName) {
 						return;
 					}
 					console.log(`[Service Worker] Updating from ${key} to ${cacheName}`);
 					return caches.delete(key);
-				})
+				}),
 			);
-		})
+		}),
 	);
 });

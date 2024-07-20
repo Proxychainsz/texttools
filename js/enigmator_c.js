@@ -561,7 +561,7 @@ var Enigmator = {
 		},
 
 		dec(text) {
-			var cipher = text.replace(/[^.\-/\s]/g, '').split(' ');
+			var cipher = text.replace(/[^.\-/\s]/g, '').split(/\s+/);
 			var result = '';
 
 			for (let i = 0; i < cipher.length; i++) {
@@ -1401,7 +1401,7 @@ var Enigmator = {
 			var determinant = findDet(key);
 			if (determinant % 2 == 0 || determinant == 13) {
 				// alert("Matrix key is not valid! Try other key.");
-				return 'Matrix key is not valid!';
+				return;
 			}
 
 			for (let i = 0; i < size; i++) {
@@ -1430,7 +1430,8 @@ var Enigmator = {
 			var inv_key = [];
 			var size = key.length;
 			if (text.length % size != 0) {
-				return "Ciphertext length isn't divisible with the Key size";
+				// return "Ciphertext length isn't divisible with the Key size";
+				return;
 			}
 			var plainArr = [];
 			var result = '';
@@ -1449,7 +1450,8 @@ var Enigmator = {
 			}
 
 			if (determinant % 2 == 0 || determinant == 13) {
-				return 'Matrix key is incorrect!';
+				// return 'Matrix key is incorrect!';
+				return;
 			}
 
 			//find Modular Multiplicative Inverse of Determinant

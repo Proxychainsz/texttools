@@ -23,8 +23,13 @@
 	--color1-4a: hsla(var(--h), 100%, 70%, 1);
 	--color1-5a: hsla(var(--h), 90%, 70%, 0.9);
 
+	--color2-0: hsl(var(--h2), 80%, 60%);
+
 	--color3-0: hsla(var(--h3), 90%, 60%, 1);
 	--color3-1: hsla(var(--h3), 90%, 60%, 0.25);
+
+	--color4-0: hsl(var(--h4), 80%, 60%);
+	--color4-1: hsl(var(--h4), 90%, 70%);
 
 	--black-a1: hsla(0, 0%, 0%, 0.6);
 	--black-a2: hsla(0, 0%, 0%, 0.15);
@@ -391,7 +396,7 @@ textarea,
 #tInput {
 	position: absolute;
 	left: auto;
-	right: 30px;
+	right: 2ch;
 	font-size: 10px;
 	color: #ffffff20;
 }
@@ -399,7 +404,7 @@ textarea,
 #tSelect {
 	position: absolute;
 	left: auto;
-	right: 30px;
+	right: 2ch;
 	font-size: 10px;
 	color: #ffffff20;
 }
@@ -408,7 +413,7 @@ textarea,
 	visibility: hidden;
 	position: absolute;
 	left: auto;
-	right: 30px;
+	right: 2ch;
 	display: flex;
 	font-size: 10px;
 	color: #ffffff20;

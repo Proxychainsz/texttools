@@ -31,7 +31,7 @@ var CyberChef = {
 		},
 
 		dec(input, base) {
-			let bites = input.split(' '),
+			let bites = input.split(/\s+/),
 				i = 0;
 			// Split into groups of 2 if the whole string is concatenated and
 			// too long to be a single character
@@ -56,13 +56,13 @@ var CyberChef = {
 		    Its here for organization sake
 		------------------------------------- */
 		enc(input, radix) {
-			input = input.trim().split(' ');
+			input = input.trim().split(/\s+/);
 			return input.map(x => Math.abs(x).toString(radix)).join(' ');
 		},
 
 		dec(input, radix) {
-			input = input.trim().split(' ');
-			return input.map(x => parseInt(x, radix)).join(' ');
+			input = input.trim().split(/\s+/);
+			return input.map(x => parseInt(x, radix)).filter(n => Number.isFinite(n)).join(' ');
 		},
 	},
 
