@@ -24,10 +24,9 @@
 
 .TMIndentedCode {
 	font-size: 12px;
-	margin-left: -7px;
 	background-color: #0000003c;
 	/* border-radius: 14px; */
-	width: calc(100% + 14px);
+	width: 100%;
 	color: #ffffffbc;
 }
 

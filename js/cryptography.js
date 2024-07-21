@@ -8,7 +8,7 @@ const Cryptography = {
 
 		enc(message) {
 			const final = [];
-			const split = message.split('');
+			const split = message.replace(/[^a-z ]/gi, '').split('');
 			for (let i = 0; i < split.length; i++) {
 				const char = split[i].toUpperCase();
 				if (this.alphabet.includes(char)) {

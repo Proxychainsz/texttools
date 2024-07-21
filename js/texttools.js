@@ -17,10 +17,10 @@ const tinyEditor = new TinyMDE.Editor({ textarea: 'textField' }),
 tinyEditor.addEventListener('change', () => {
 	const input = textField.value;
 	charCounter.textContent = input.length;
-	noWSpaceCounter.textContent = (input.replace(/\s/g, '') || '').length;
+	noWSpaceCounter.textContent = (input.replace(/\s+/g, '') || '').length;
 	letterCounter.textContent = (input.match(/[a-z]/gi) || []).length;
 	digitCounter.textContent = (input.match(/\d/g) || []).length;
-	groupCounter.textContent = (input.trim().split(/\s+/) || '').length;
+	groupCounter.textContent = input.length <= 0 ? 0 : input.split(/\s+/).length;
 
 	if (undoHistory.current() !== input) {
 		if (
@@ -323,24 +323,24 @@ function extractFibo(input) {
 
 const a1z26 = {
 	enc(txt, m) {
-		m >= 1 || !m === '' ? (m = 1) : (m = 0);
+		m >= 1 || m === '' ? (m = 1) : (m = 0);
 		let res = '';
 		txt = txt.toLowerCase();
 		for (const x of [...txt]) {
 			if (/[a-z]/.test(x)) res += `${x.charCodeAt(0) - (97 - m)} `;
-			else res += x;
+			else res += '';
 		}
-		return res.replace(/\s+/g, ' ');
+		return res;
 	},
 	dec(txt, m) {
-		m >= 1 || !m === '' ? (m = 1) : (m = 0);
+		m >= 1 || m === '' ? (m = 1) : (m = 0);
 		let res = '';
 		txt = txt.toLowerCase().split(/\s+/);
 		for (const x of txt) {
 			if (x >= 0 && x <= 26) res += String.fromCharCode(97 + (x - m));
 			else res += '';
 		}
-		return res.replace(/\s+/g, ' ');
+		return res;
 	},
 };
 
@@ -416,7 +416,7 @@ const smsMultitap = {
 			const char = txt[i].toLowerCase();
 			for (const key in this.keyMap) {
 				if (this.keyMap[key].includes(char)) {
-					res += key.repeat(this.keyMap[key].indexOf(char) + 1);
+					res += `${key.repeat(this.keyMap[key].indexOf(char) + 1)} `;
 					break;
 				}
 			}
@@ -1276,7 +1276,7 @@ function massEncode() {
 		result.Binary = toBinary(txt);
 		result.Decimal_to_Binary = decToBinary(txt);
 		result.xor = xor(txt, key);
-		result.Binary_Flip = binFlip(txt.replace(/[^0-1 ]/g, '').replace(/\s+/g, ' '));
+		result.Binary_Flip = binFlip(txt.replace(/[^0-1 ]/g, ''));
 		result.Baudot_v1 = Boxentriq.baudot.enc(txt, 'v1');
 		result.Baudot_v2 = Boxentriq.baudot.enc(txt, 'v2');
 		result.UUEncoding = Enigmator.uuencoding.enc(txt);
@@ -1373,7 +1373,7 @@ function massDecode() {
 		result.Binary = fromBinary(txt);
 		result.Binary_to_Decimal = binToDecimal(txt).replace(/\s\s+/g, '');
 		result.xor = xor(txt, key);
-		result.Binary_Flip = binFlip(txt.replace(/[^0-1 ]/g, '').replace(/\s+/g, ' '));
+		result.Binary_Flip = binFlip(txt.replace(/[^0-1 ]/g, ''));
 		result.Baudot_v1 = Boxentriq.baudot.dec(txt, 'v1');
 		result.Baudot_v2 = Boxentriq.baudot.dec(txt, 'v2');
 		result.UUEncoding = Enigmator.uuencoding.dec(txt);
@@ -1403,14 +1403,21 @@ function massDecode() {
 }
 
 function genResElements(results, txt) {
-	let element = '';
+	let html = '';
+	for (const key in results) {
+		const str = removeInvalid(results[key]);
+		if (isEmpty(str) || str === txt) continue;
 
-	for (const i in results) {
-		results[i] = removeInvalid(results[i]);
-		if (!isEmpty(results[i]) && results[i] !== txt)
-			element += `<resId>${i.replaceAll('_', ' ')}</resId><resDiv><textarea id='${i}Res' class='resTxtArea' ondblclick='copyResults(this.id)' readonly>${results[i]}</textarea></resDiv>`;
+		const k = key.replaceAll('_', ' ');
+		const s = str.replace(/\s+/g, ' ').trim();
+
+		html += `
+			<resId>${k}</resId>
+			<resDiv>
+				<textarea id='${k}Res' class='resTxtArea' ondblclick='copyResults(this.id)' readonly>${s}</textarea>
+			</resDiv>`;
 	}
 
 	$('resContainer').innerHTML = '';
-	$('resContainer').insertAdjacentHTML('beforeend', element);
+	$('resContainer').insertAdjacentHTML('beforeend', html);
 }
