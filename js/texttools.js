@@ -137,6 +137,12 @@ function KeyPressDown(e) {
 				duration: 900,
 			});
 		}
+		if (e.target.id === 'calcValue') {
+			btnCalculate.click();
+			$('btnCalculate').animate([{ backgroundColor: 'var(--color1)' }, { backgroundColor: 'var(--color1-1a)' }], {
+				duration: 900,
+			});
+		}
 	}
 
 	if (e.target.className === 'TinyMDE' && e.key === 'Tab') {
@@ -551,7 +557,7 @@ remSpecial.onclick = () => {
 	const res = [];
 
 	for (const line of input.split('\n')) {
-		res.push(line.replace(/(?!\w|\s)./g, ''));
+		res.push(line.replace(/[^a-z0-9\s]/gi, ''));
 	}
 
 	outField.value = res.join('\n');
@@ -616,23 +622,35 @@ btnSort.onclick = () => {
 
 padStart.onclick = () => {
 	updateHistory();
-	const input = textField.value.trim().split(' ');
+	const input = textField.value.trim();
 	const len = prompt('Length', '2');
-	if (len == null) return;
 	const str = prompt('Fill String', '0');
-	if (str == null) return;
-	outField.value = input.map((x) => x.padStart(len, str)).join(' ');
+	if (len == null || str == null) return;
+
+	const res = [];
+	for (const line of input.split(/\n/)) {
+		const l = line.split(/\s/);
+		res.push(l.map((x) => x.padStart(len, str)).join(' '));
+	}
+
+	outField.value = res.join('\n');
 	updateInput();
 };
 
 padEnd.onclick = () => {
 	updateHistory();
-	const input = textField.value.trim().split(' ');
+	const input = textField.value.trim();
 	const len = prompt('Length', '2');
-	if (len == null) return;
 	const str = prompt('Fill String', '0');
-	if (str == null) return;
-	outField.value = input.map((x) => x.padEnd(len, str)).join(' ');
+	if (len == null || str == null) return;
+
+	const res = [];
+	for (const line of input.split(/\n/)) {
+		const l = line.split(/\s/);
+		res.push(l.map((x) => x.padEnd(len, str)).join(' '));
+	}
+
+	outField.value = res.join('\n');
 	updateInput();
 };
 
@@ -798,20 +816,22 @@ btnCalculate.onclick = () => {
 	const input = textField.value;
 	const op = calcOP.value;
 	const val = Number(calcValue.value) || 0;
-	const reg = /(?<=^| )[+-]?\d+([eE]?[+-]?\d+)?(\.\d+([eE]?[+-]?\d+)?)?(?=$| )|(?<=^| )\.\d+(?=$| )/;
+	const reg = /(?<=^|\s)[+-]?\d*\.?\d+([eE][+-]?\d+)?(?=\s|$)/g;
 	let res = '';
 
 	switch (op) {
 		case 'reduce': {
-			const x = input.match(/(\b[\d.]+\b)/g);
-			outField.value = x.map(Number).reduce((a, b) => +a + +b, 0);
+			const x = input.match(reg);
+			outField.value = x.map(Number).reduce((a, b) => a + b, 0);
 			return updateInput();
 		}
 		default:
 			for (const line of input.split(/\n/)) {
 				for (const num of line.split(/\s+/)) {
 					reg.test(num) ? (res += calculate[op](+num, val)) : (res += num);
+					res += ' ';
 				}
+				res += '\n';
 			}
 
 			outField.value = res;
