@@ -816,7 +816,7 @@ btnCalculate.onclick = () => {
 	const input = textField.value;
 	const op = calcOP.value;
 	const val = Number(calcValue.value) || 0;
-	const reg = /(?<=^|\s)[+-]?\d*\.?\d+([eE][+-]?\d+)?(?=\s|$)/g;
+	const reg = /(?<=^| )[+-]?\d+([eE]?[+-]?\d+)?(\.\d+([eE]?[+-]?\d+)?)?(?=$| )|(?<=^| )\.\d+(?=$| )/;
 	let res = '';
 
 	switch (op) {
