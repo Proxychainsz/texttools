@@ -629,7 +629,7 @@ padStart.onclick = () => {
 
 	const res = [];
 	for (const line of input.split(/\n/)) {
-		const l = line.split(/\s/);
+		const l = line.split(/\s+/);
 		res.push(l.map((x) => x.padStart(len, str)).join(' '));
 	}
 
@@ -646,7 +646,7 @@ padEnd.onclick = () => {
 
 	const res = [];
 	for (const line of input.split(/\n/)) {
-		const l = line.split(/\s/);
+		const l = line.split(/\s+/);
 		res.push(l.map((x) => x.padEnd(len, str)).join(' '));
 	}
 
@@ -816,12 +816,13 @@ btnCalculate.onclick = () => {
 	const input = textField.value;
 	const op = calcOP.value;
 	const val = Number(calcValue.value) || 0;
-	const reg = /(?<=^| )[+-]?\d+([eE]?[+-]?\d+)?(\.\d+([eE]?[+-]?\d+)?)?(?=$| )|(?<=^| )\.\d+(?=$| )/;
+	// const reg = /(?<=^| )[+-]?\d+([eE]?[+-]?\d+)?(\.\d+([eE]?[+-]?\d+)?)?(?=$| )|(?<=^| )\.\d+(?=$| )/;
+	const reg = /(?<=^| )[+-]?(?:\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?(?=$| )/;
 	let res = '';
 
 	switch (op) {
 		case 'reduce': {
-			const x = input.match(reg);
+			const x = input.match(/\d+/g);
 			outField.value = x.map(Number).reduce((a, b) => a + b, 0);
 			return updateInput();
 		}
@@ -833,8 +834,8 @@ btnCalculate.onclick = () => {
 				}
 				res += '\n';
 			}
-
-			outField.value = res;
+			// replace multiple empty lines or ones containing only spaces with a single empty line
+			outField.value = res.replace(/^\s*\n(?:\s*\n)+/gm, '\n').trim();
 			updateInput();
 	}
 };
