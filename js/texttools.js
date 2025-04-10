@@ -62,6 +62,39 @@ function altToggle() {
 	}
 }
 
+let sidebar = false;
+sidebarToggle.onclick = () => {
+	const sb = $('sidebar');
+	if (sidebar) {
+		sidebar = false;
+		document.body.classList.remove('sbSmall');
+		sb.style.width = '210px';
+		$('sidebarToggle').style.backgroundColor = '';
+	} else {
+		sidebar = true;
+		document.body.classList.add('sbSmall');
+		sb.style.width = '58px';
+		$('sidebarToggle').style.backgroundColor = 'var(--color2-0)';
+	}
+};
+
+const mediaQuery = window.matchMedia('(max-width: 700px)');
+function handleMediaQueryChange(e) {
+	const b = document.body;
+	if (!sidebar) {
+		if (e.matches) {
+			b.classList.add('sbSmall');
+			b.classList.add('sbHover');
+		} else {
+			b.classList.remove('sbSmall');
+			b.classList.remove('sbHover');
+		}
+	}
+}
+
+mediaQuery.addEventListener('change', handleMediaQueryChange);
+handleMediaQueryChange(mediaQuery);
+
 function updateHistory() {
 	textField.dispatchEvent(new Event('input'));
 }
@@ -495,6 +528,29 @@ function charToDecimal(letter, v) {
 
 function toChar(number, v) {
 	return String.fromCodePoint(65 - v + number);
+}
+
+function stringToDecimalBytes(input) {
+	const res = [];
+	// Convert each character to UTF-8 bytes
+	for (const char of input) {
+		const utf8Char = unescape(encodeURIComponent(char));
+		for (const byte of utf8Char) {
+			res.push(byte.charCodeAt(0));
+		}
+	}
+	return res.map((byte) => byte.toString(10)).join(' ');
+}
+
+function decimalBytestoString(input) {
+	const byteValues = input
+		.trim()
+		.split(/\s+/)
+		.map((num) => Number.parseInt(num, 10));
+
+	const byteArray = new Uint8Array(byteValues);
+	// Decode the byte array as UTF-8
+	return new TextDecoder().decode(byteArray);
 }
 
 /* --------------------------------------------
@@ -1284,7 +1340,8 @@ function massEncode() {
 	result.Reversed = txt.split('').reverse().join('');
 
 	if ($('encodings').checked) {
-		result.Ascii = new TextEncoder().encode(txt).join(' ');
+		// result.Ascii = new TextEncoder().encode(txt).join(' ');
+		result.Ascii = stringToDecimalBytes(txt);
 		result.Base64 = Enigmator.base64.enc(txt);
 		result.Base32 = Enigmator.base32.enc(txt);
 		result.Base26_0 = base26.enc(txt, 0);
@@ -1384,7 +1441,8 @@ function massDecode() {
 	}
 
 	if ($('encodings').checked) {
-		result.Ascii = String.fromCharCode.apply(this, txt.split(/\s+/));
+		// result.Ascii = String.fromCharCode.apply(this, txt.split(/\s+/));
+		result.Ascii = decimalBytestoString(txt);
 		result.Base64 = parseB64(txt);
 		result.Base32 = Enigmator.base32.dec(txt);
 		result.Base26_0 = base26.dec(txt, 0);

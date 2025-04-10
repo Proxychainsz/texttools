@@ -33,6 +33,11 @@
 				</svg>
 				<span class="logoText">TextTools++</span>
 			</div>
+			<button id="sidebarToggle" type="button" title="Lock Smaller Sidebar" class="button-circle">
+				<svg viewBox="0 -960 960 960" class="icons">
+					<path d="M120-240v-80h520v80H120Zm664-40L584-480l200-200 56 56-144 144 144 144-56 56ZM120-440v-80h400v80H120Zm0-200v-80h520v80H120Z"/>
+				</svg>
+			</button>
 			<spacerLine></spacerLine>
 			<div class="cRemove">
 				<div class="cRemoveButtons">
@@ -91,10 +96,6 @@
 			<div class="cButtons">
 				<div class="wideButtonsTitle">
 					<span class="cTitles">Input manipulation</span>
-					<svg viewBox="0 0 1024 1024" id="toggle1" class="threeDots svgIcons">
-						<path
-							d="M597.333 512c0-23.552-9.6-44.928-25.003-60.331s-36.779-25.003-60.331-25.003-44.928 9.6-60.331 25.003-25.003 36.779-25.003 60.331 9.6 44.928 25.003 60.331 36.779 25.003 60.331 25.003 44.928-9.6 60.331-25.003 25.003-36.779 25.003-60.331zM896 512c0-23.552-9.6-44.928-25.003-60.331s-36.779-25.003-60.331-25.003-44.928 9.6-60.331 25.003-25.003 36.779-25.003 60.331 9.6 44.928 25.003 60.331 36.779 25.003 60.331 25.003 44.928-9.6 60.331-25.003 25.003-36.779 25.003-60.331zM298.667 512c0-23.552-9.6-44.928-25.003-60.331s-36.779-25.003-60.331-25.003-44.928 9.6-60.331 25.003-25.003 36.779-25.003 60.331 9.6 44.928 25.003 60.331 36.779 25.003 60.331 25.003 44.928-9.6 60.331-25.003 25.003-36.779 25.003-60.331z" />
-					</svg>
 				</div>
 				<div class="cWideButtons">
 					<button id="btnTrim" type="button" class="buttonWide"
@@ -189,10 +190,6 @@
 			<div class="cButtons">
 				<div class="wideButtonsTitle">
 					<span class="cTitles">Quick binary</span>
-					<svg viewBox="0 0 1024 1024" id="toggle2" class="threeDots svgIcons">
-						<path
-							d="M597.333 512c0-23.552-9.6-44.928-25.003-60.331s-36.779-25.003-60.331-25.003-44.928 9.6-60.331 25.003-25.003 36.779-25.003 60.331 9.6 44.928 25.003 60.331 36.779 25.003 60.331 25.003 44.928-9.6 60.331-25.003 25.003-36.779 25.003-60.331zM896 512c0-23.552-9.6-44.928-25.003-60.331s-36.779-25.003-60.331-25.003-44.928 9.6-60.331 25.003-25.003 36.779-25.003 60.331 9.6 44.928 25.003 60.331 36.779 25.003 60.331 25.003 44.928-9.6 60.331-25.003 25.003-36.779 25.003-60.331zM298.667 512c0-23.552-9.6-44.928-25.003-60.331s-36.779-25.003-60.331-25.003-44.928 9.6-60.331 25.003-25.003 36.779-25.003 60.331 9.6 44.928 25.003 60.331 36.779 25.003 60.331 25.003 44.928-9.6 60.331-25.003 25.003-36.779 25.003-60.331z" />
-					</svg>
 				</div>
 				<div class="cWideButtons">
 					<button id="btnBinaryFlip" type="button" class="buttonWide" title="Replaces 0 > 1 // 1 > 0">
@@ -490,13 +487,13 @@
 			<div class="dialog_column" style="background: transparent; padding: 0">
 				<div class="x">
 					<h1 style="color: var(--color1)"
-						onclick="bgSet('/assets/bg0.webp'); localStorage.removeItem('random')">●</h1>
+						onclick="bgSet('/assets/bg0.webp'); localStorage.removeItem('random')">·</h1>
 					<h1 style="color: var(--color2)"
-						onclick="bgSet('/assets/bg1.webp'); localStorage.removeItem('random')">●</h1>
+						onclick="bgSet('/assets/bg1.webp'); localStorage.removeItem('random')">·</h1>
 					<h1 style="color: var(--color3)"
-						onclick="bgSet('/assets/bg2.webp'); localStorage.removeItem('random')">●</h1>
+						onclick="bgSet('/assets/bg2.webp'); localStorage.removeItem('random')">·</h1>
 					<h1 style="color: var(--color4)"
-						onclick="bgSet('/assets/bg3.webp'); localStorage.removeItem('random')">●</h1>
+						onclick="bgSet('/assets/bg3.webp'); localStorage.removeItem('random')">·</h1>
 				</div>
 				<h2>Custom Background & Theme</h2>
 				<div class="dialog_column text02">
